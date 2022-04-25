@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.font import Font
+import modules.player
 
 root = Tk()
 root.title("Gaem")
