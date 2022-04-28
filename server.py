@@ -2,6 +2,7 @@
 
 import socket
 import numpy
+import struct
 import modules.networkpacking
 
 class server:
@@ -15,7 +16,7 @@ class server:
 
   def main(self):
     self.serversocket.listen()
-    clientsocket, addr = serversocket.accept()
+    clientsocket, addr = self.serversocket.accept()
     print("accepted connection")
     # array = [0, 1, 3]
     # numarray = numpy.array(array)
@@ -23,7 +24,7 @@ class server:
 
   def sendmap(self, clientsocket):
     sizebytes = struct.pack(">hh", self.gamemap.shape[0], self.gamemap.shape[1])
-    mapbytes = gamemap.tobytes()
+    mapbytes = self.gamemap.tobytes()
     clientsocket.send(sizebytes + mapbytes)
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ from ast import MatchOr
 
 class TileMap:
     def __init__(self, width, height) -> None:
-        self.matrix = []
+        self.matrix = [[0] * width] * height
         temp: list = []
         for i in range(0, height):
             temp.insert(i, 0)
