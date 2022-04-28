@@ -2,8 +2,9 @@
 
 import socket
 import numpy
+import struct
 
-class Networking:
+class networking:
   def __init__(self):
     host = "127.0.0.1"
     port = 7897
@@ -14,11 +15,19 @@ class Networking:
   def senddata(self, data) -> None:
     self.sock.send(data.encode)
 
-  def recievedata(self):
+  def recievemap(self) -> list:
+    height, width = struct.unpack(">hh", self.sock.recv(struct.calcsize(">hh")))
+    gamemap = numpy.frombuffer(self.sock.recv(width * height), \
+        dtype = numpy.bool_)
+    gamemap = gamemap.reshape(height, width)
+    return gamemap
+    #return list(gamemap)
+
+  def recievesomething(self):
     mybuffer = self.sock.recv(1024)
     data = numpy.frombuffer(mybuffer, dtype=numpy.uint8)
-    return(data)
+    return data
 
 if __name__ == '__main__':
-  networking = Networking()
-  print(networking.recievedata())
+  mynetworking = networking()
+  print(mynetworking.recievedata())
