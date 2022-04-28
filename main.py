@@ -1,9 +1,11 @@
+#!/usr/bin/python3
+
 from tkinter import *
 from tkinter.font import Font
 import modules.player
 
 root = Tk()
-root.title("Gaem")
+root.title("Gaem") #interesting title
 root.geometry("640x640")
 
 font = Font(family="Sans Serif", size=28)
