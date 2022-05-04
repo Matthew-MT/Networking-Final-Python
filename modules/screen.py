@@ -9,7 +9,7 @@ class TileMap:
         self.tileSize = initTileSize
         self.network = initNetwork
         self.matrix = self.network.receivemap().tolist()
-        return
+        pass
     
     def checkCollision(self, rect: tuple) -> bool:
         offset = (
