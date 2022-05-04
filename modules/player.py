@@ -1,4 +1,21 @@
+from math import floor
+from random import randint
+from networking import networking
+from screen import TileMap
+
 class Player:
-    size: tuple
-    def __init__(self) -> None:
+    rect: tuple
+    otherPlayers: list
+    network: networking
+    tileMap: TileMap
+    def __init__(self, originRect, initNetwork, initTileMap) -> None:
+        self.rect = originRect
+        self.network = initNetwork
+        self.otherPlayers = self.network.receivePlayerData()
+        self.tileMap = initTileMap
         pass
+
+    def respawn(self):
+        openTiles = self.tileMap.openTiles
+        tile = openTiles[randint(0, len(openTiles) - 1)]
+        self.rect = (tile[0], tile[1], self.rect[2], self.rect[3])
