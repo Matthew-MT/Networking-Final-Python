@@ -4,23 +4,26 @@ import socket
 import numpy
 import struct
 
+defaulthost = "127.0.0.1"
+
 class networking:
   def __init__(self):
     host: str = input("Enter the destination ip address " \
-        + "(or blank for 127.0.0.1):")
+        + f"(or blank for {defaulthost}): ")
     if host == "":
-      host = "127.0.0.1"
+      host = defaulthost
     port: int = 7897
-    self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    self.sock.connect((host, port))
-    print("__init__ done")
+    # self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    self.sockettcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    self.sockettcp.connect((host, port))
 
   def senddata(self, data) -> None:
-    self.sock.send(data.encode)
+    self.sockettcp.send(data.encode)
 
   def receivemap(self) -> list:
-    height, width = struct.unpack(">hh", self.sock.recv(struct.calcsize(">hh")))
-    gamemap = numpy.frombuffer(self.sock.recv(width * height), \
+    height, width = struct.unpack(">hh", self.sockettcp\
+        .recv(struct.calcsize(">hh")))
+    gamemap = numpy.frombuffer(self.sockettcp.recv(width * height), \
         dtype = numpy.bool_)
     gamemap = gamemap.reshape(height, width)
     return gamemap.tolist()
