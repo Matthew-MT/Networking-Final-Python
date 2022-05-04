@@ -1,17 +1,19 @@
 from math import floor
-
-from numpy import tile
 from networking import networking
-from tkinter import Canvas
 
 class TileMap:
     tileSize: float
     matrix: list
     network: networking
+    openTiles: list
     def __init__(self, initNetwork, initTileSize) -> None:
         self.tileSize = initTileSize
         self.network = initNetwork
-        self.matrix = self.network.receivemap().tolist()
+        self.matrix = self.network.receivemap()
+        for x in range(0, len(self.matrix)):
+            for y in range(0, len(self.matrix[0])):
+                if not self.matrix[x][y]:
+                    self.openTiles.append(tuple(x, y))
         pass
     
     def checkCollision(self, rect: tuple) -> bool:
