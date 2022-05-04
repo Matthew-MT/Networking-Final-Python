@@ -28,6 +28,9 @@ class networking:
     gamemap = gamemap.reshape(height, width)
     return gamemap.tolist()
 
+  def playerdata(self, playrclass) -> list:
+    return [[0, "name", [4, 6], [[4, 6], [4, 666], [5, 77]]]]
+
   # def recievesomething(self):
   #   mybuffer = self.sock.recv(1024)
   #   data = numpy.frombuffer(mybuffer, dtype=numpy.uint8)
