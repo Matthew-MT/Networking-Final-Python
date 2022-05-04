@@ -30,8 +30,9 @@ class TileMap:
             )
         )
 
-        for idx in tileIdx:
-            x, y = idx
-            if self.matrix[x][y]:
-                return True
+        if self.matrix[tileIdx[0][0]][tileIdx[0][1]]\
+        or self.matrix[tileIdx[0][0]][tileIdx[1][1]]\
+        or self.matrix[tileIdx[1][0]][tileIdx[0][1]]\
+        or self.matrix[tileIdx[1][0]][tileIdx[1][1]]:
+            return True
         return False
