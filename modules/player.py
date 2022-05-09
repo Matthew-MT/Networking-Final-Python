@@ -1,3 +1,4 @@
+from curses import initscr
 from math import floor
 from random import randint
 from networking import networking
@@ -8,12 +9,16 @@ class Player:
     otherPlayers: list
     network: networking
     tileMap: TileMap
-    def __init__(self, originRect, initNetwork, initTileMap) -> None:
-        self.rect = originRect
+    def __init__(self, initSize, initNetwork, initTileMap) -> None:
+        self.rect = (0, 0, initSize[0], initSize[1])
+        self.respawn()
         self.network = initNetwork
         self.otherPlayers = self.network.receivePlayerData()
         self.tileMap = initTileMap
         pass
+
+    def gameTick():
+        return
 
     def respawn(self):
         openTiles = self.tileMap.openTiles
