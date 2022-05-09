@@ -17,7 +17,8 @@ class Player:
         self.tileMap = initTileMap
         pass
 
-    def gameTick():
+    def gameTick(self):
+        self.network.playerdata(self)
         return
 
     def respawn(self):
