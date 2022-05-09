@@ -19,6 +19,7 @@ nameInput.grid_location(320 - nameInput.winfo_height(), 320 - nameInput.winfo_wi
 nameInput.pack()
 
 canvas = Canvas(root, width=600, height=600, bg="white")
+canvas.create_rectangle(0, 0, 600, 600, fill="black")
 
 def submitted():
     global nameInput
@@ -41,8 +42,11 @@ submit.pack()
 screen = TileMap(network, 80)
 player = Player((40, 40), network, screen)
 
-view: tuple = (0, 0, 600, 600)
+view: tuple = player.getView()
 background: list = screen.getDrawScreen(view)
+for column in background:
+    for tile in column:
+        canvas.create_rectangle(tile[0], tile[1], tile[2], tile[3], fill=tile[4], tags="redraw")
 
 def draw():
     global screen
@@ -51,15 +55,16 @@ def draw():
     global view
     global background
 
+    canvas.delete("redraw")
     nextView = player.getView()
+
     if abs(nextView[0] - view[0]) > 0.2\
     or abs(nextView[1] - view[1]) > 0.2:
         view = nextView
         background = screen.getDrawScreen(view)
-
-    for column in background:
-        for tile in column:
-            canvas.create_rectangle(tile)
+        for column in background:
+            for tile in column:
+                canvas.create_rectangle(tile[0], tile[1], tile[2], tile[3], fill=tile[4], tags="redraw")
     return
 
 def update():
