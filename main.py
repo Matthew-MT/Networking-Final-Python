@@ -11,14 +11,22 @@ root.geometry("640x640")
 
 font = Font(family="Sans Serif", size=28)
 
+network = networking()
+
 nameInput = Entry()
 nameInput.grid_location(320 - nameInput.winfo_height(), 320 - nameInput.winfo_width())
 nameInput.pack()
 
+def submitted():
+    global nameInput
+    global network
+    val: str = nameInput.get()
+
+submit = Button(root, text="Submit", command=submitted)
+submit.pack()
+
 canvas = Canvas(root, width=600, height=600, bg="white")
 canvas.pack(padx=20, pady=20)
-
-network = networking()
 
 player = Player()
 
