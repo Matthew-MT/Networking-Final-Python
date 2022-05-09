@@ -18,7 +18,7 @@ class Player:
         pass
 
     def gameTick(self):
-        self.network.playerdata(self)
+        otherData = self.network.playerdata(self)
         return
 
     def respawn(self):
