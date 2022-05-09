@@ -5,8 +5,8 @@ from networking import networking
 from screen import TileMap
 
 class Player:
-    rect: tuple
-    otherPlayers: dict
+    rect: tuple # (x, y, w, h)
+    otherPlayers: dict # {"<id0>": {"name": str, "position": (float, float)}, ...}
     network: networking
     tileMap: TileMap
     def __init__(self, initSize, initNetwork, initTileMap) -> None:
