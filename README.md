@@ -1,7 +1,7 @@
 # Networking-Final-Python
 
 ```python
-data = {
+receiveEveryUpdate = {
     "players": {
         "<id0>": (float, float),
         "<id1>": (float, float)
@@ -10,5 +10,10 @@ data = {
         (float, float),
         (float, float)
     ]
+}
+
+receiveOneTimeNames = {
+    "name": str,
+    "id": int
 }
 ```
