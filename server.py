@@ -1,9 +1,12 @@
 #!/usr/bin/python3
 
-import socket
 import numpy
+import socket
 import struct
-import modules.networkpacking
+import selectors
+
+CONNECTION_TCP = 0b01
+CONNECTION_SERVERSOCKET = 0b10
 
 class server:
   def __init__(self):
@@ -17,8 +20,24 @@ class server:
 
   def main(self):
     self.serversockettcp.listen()
-    self.aclientsockettcp, addr = self.serversockettcp.accept()
-    print("accepted connection, sending map")
+    connections = selectors.DefaultSelector()
+    connections.register(self.serversockettcp, selectors.EVENT_READ, \
+        CONNECTION_TCP | CONNECTION_SERVERSOCKET)
+    while True:
+      print('selecting...')
+      readyconnections = connections.select()
+      for readyconnection, __ in readyconnections:
+        if readyconnection.data & CONNECTION_SERVERSOCKET:
+          clientsocket = readyconnection.fileobj.accept()[0]
+          connections.register(clientsocket, selectors.EVENT_READ, \
+              readyconnection.data & CONNECTION_TCP)
+        else:
+          data = readyconnection.fileobj.recv(2)
+          if data:
+            print(data)
+          else:
+            connections.unregister(readyconnection.fileobj)
+            readyconnection.fileobj.close()
     # array = [0, 1, 3]
     # numarray = numpy.array(array)
     # conn.send(numarray.tobytes())

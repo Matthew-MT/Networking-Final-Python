@@ -7,7 +7,7 @@ import struct
 defaulthost = "127.0.0.1"
 
 class networking:
-  def __init__(self):
+  def __init__(self, playername):
     host: str = input("Enter the destination ip address " \
         + f"(or blank for {defaulthost}): ")
     if host == "":
@@ -17,8 +17,8 @@ class networking:
     self.sockettcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.sockettcp.connect((host, port))
 
-  def senddata(self, data) -> None:
-    self.sockettcp.send(data.encode)
+  # def senddata(self, data) -> None:
+    # self.sockettcp.send(data.encode)
 
   def receivemap(self) -> list:
     height, width = struct.unpack(">hh", self.sockettcp\
@@ -37,5 +37,6 @@ class networking:
   #   return data
 
 if __name__ == '__main__':
-  mynetworking = networking()
+  mynetworking = networking(input("What's your name?: "))
+  mynetworking.sockettcp.send(b'ht')
   print(mynetworking.receivemap())
