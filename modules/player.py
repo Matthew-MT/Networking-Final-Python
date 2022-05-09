@@ -5,6 +5,7 @@ from networking import networking
 from screen import TileMap
 
 class Player:
+    name: str = ""
     rect: tuple # (x, y, w, h)
     otherPlayers: dict # {"<id0>": {"name": str, "position": (float, float)}, ...}
     network: networking
@@ -16,6 +17,11 @@ class Player:
         self.otherPlayers = self.network.receivePlayerData()
         self.tileMap = initTileMap
         pass
+
+    def getView(self, scrW, scrH):
+        center = (self.rect[0] + (self.rect[2] / 2), self.rect[1] + (self.rect[3] / 2))
+        origin = (center[0] - (scrW / 2), center[1] - (scrH / 2))
+        return (origin[0], origin[1], origin[0] + scrW, origin[1] + scrH)
 
     def gameTick(self):
         self.network.playerdata(self)

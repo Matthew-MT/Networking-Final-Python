@@ -83,9 +83,10 @@ class TileMap:
                     fill = "black"
                 elif self.matrix[x][y] == 0:
                     fill = "white"
-                drawMatrix.append(tuple(
+                drawMatrix[x].append(tuple(
                     (x * self.tileSize) - offset[0],
                     (y * self.tileSize) - offset[1],
                     (x * (self.tileSize + 1)) - offset[0],
-                    (y * (self.tileSize + 1)) - offset[1]))
+                    (y * (self.tileSize + 1)) - offset[1]
+                ))
         return drawMatrix

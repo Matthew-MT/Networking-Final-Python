@@ -22,9 +22,11 @@ canvas = Canvas(root, width=600, height=600, bg="white")
 
 def submitted():
     global nameInput
-    global network
     global submit
+
+    global network
     global canvas
+
     val: str = nameInput.get()
 
     nameInput.pack_forget()
@@ -39,7 +41,32 @@ submit.pack()
 screen = TileMap(network, 80)
 player = Player((40, 40), network, screen)
 
+view: tuple = (0, 0, 600, 600)
+background: list = screen.getDrawScreen(view)
+
+def draw():
+    global screen
+    global player
+    global canvas
+    global view
+    global background
+
+    nextView = player.getView()
+    if abs(nextView[0] - view[0]) > 0.2\
+    or abs(nextView[1] - view[1]) > 0.2:
+        view = nextView
+        background = screen.getDrawScreen(view)
+
+    for column in background:
+        for tile in column:
+            canvas.create_rectangle(tile)
+    return
+
 def update():
+    global player
+    global canvas
+
+    player.gameTick()
     canvas.after(20, update)
     return
 
