@@ -6,7 +6,7 @@ from screen import TileMap
 
 class Player:
     rect: tuple
-    otherPlayers: list
+    otherPlayers: dict
     network: networking
     tileMap: TileMap
     def __init__(self, initSize, initNetwork, initTileMap) -> None:
@@ -18,7 +18,7 @@ class Player:
         pass
 
     def gameTick(self):
-        otherData = self.network.playerdata(self)
+        self.network.playerdata(self)
         return
 
     def respawn(self):
