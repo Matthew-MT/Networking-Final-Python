@@ -13,31 +13,41 @@ class server:
     self.gamemap = numpy.array([[False, True, False], [True, False, False]])
     host = "0.0.0.0"
     port = 7897
-    # self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    self.serversockettcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    self.serversockettcp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    self.serversockettcp.bind((host, port))
+    
+    self.connections = selectors.DefaultSelector()
+    
+    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    serversocket.bind((host, port))
+    serversocket.listen()
+    self.connections.register(serversocket, selectors.EVENT_READ, \
+        CONNECTION_TCP | CONNECTION_SERVERSOCKET)
+    
+    serversocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    serversocket.bind((host, port))
+    self.connections.register(serversocket, selectors.EVENT_READ, \
+        CONNECTION_SERVERSOCKET)
+    # print(serversocket.recvfrom(2))
 
   def main(self):
-    self.serversockettcp.listen()
-    connections = selectors.DefaultSelector()
-    connections.register(self.serversockettcp, selectors.EVENT_READ, \
-        CONNECTION_TCP | CONNECTION_SERVERSOCKET)
     while True:
       print('selecting...')
-      readyconnections = connections.select()
+      readyconnections = self.connections.select()
       for readyconnection, __ in readyconnections:
-        if readyconnection.data & CONNECTION_SERVERSOCKET:
-          clientsocket = readyconnection.fileobj.accept()[0]
-          connections.register(clientsocket, selectors.EVENT_READ, \
-              readyconnection.data & CONNECTION_TCP)
-        else:
-          data = readyconnection.fileobj.recv(2)
-          if data:
-            print(data)
+        if readyconnection.data & CONNECTION_TCP:
+          if readyconnection.data & CONNECTION_SERVERSOCKET:
+            clientsocket = readyconnection.fileobj.accept()[0]
+            self.connections.register(clientsocket, selectors.EVENT_READ, \
+                                      readyconnection.data & CONNECTION_TCP)
           else:
-            connections.unregister(readyconnection.fileobj)
-            readyconnection.fileobj.close()
+            data = readyconnection.fileobj.recv(2)
+            if data:
+              print(data)
+            else:
+              self.connections.unregister(readyconnection.fileobj)
+              readyconnection.fileobj.close()
+        else:
+          print(readyconnection.fileobj.recvfrom(2))
     # array = [0, 1, 3]
     # numarray = numpy.array(array)
     # conn.send(numarray.tobytes())

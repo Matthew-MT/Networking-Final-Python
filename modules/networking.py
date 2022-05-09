@@ -17,6 +17,9 @@ class networking:
     self.sockettcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.sockettcp.connect((host, port))
 
+    self.sockudp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    self.sockudp.sendto(b'ht', (host, port))
+
   # def senddata(self, data) -> None:
     # self.sockettcp.send(data.encode)
 
