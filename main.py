@@ -21,12 +21,43 @@ nameInput.pack()
 canvas = Canvas(root, width=600, height=600, bg="white")
 canvas.create_rectangle(0, 0, 600, 600, fill="black")
 
+up: bool = False
+left: bool = False
+right: bool = False
+
+def keyPress(event):
+    global up
+    global left
+    global right
+    keyName = event.keysym
+    if keyName == "Up":
+        up = True
+    elif keyName == "Left":
+        left = True
+    elif keyName == "Right":
+        right = True
+    return
+
+def keyRelease(event):
+    global up
+    global left
+    global right
+    keyName = event.keysym
+    if keyName == "Up":
+        up = False
+    elif keyName == "Left":
+        left = False
+    elif keyName == "Right":
+        right = False
+    return
+
 def submitted():
     global nameInput
     global submit
 
     global network
     global canvas
+    global root
 
     val: str = nameInput.get()
 
@@ -34,6 +65,10 @@ def submitted():
     submit.pack_forget()
 
     canvas.pack(padx=20, pady=20)
+
+    root.bind("<KeyPress>", keyPress)
+    root.bind("<KeyRelease>", keyRelease)
+
     return
 
 submit = Button(root, text="Submit", command=submitted)
