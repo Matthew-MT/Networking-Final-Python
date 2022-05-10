@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import time
+from time import time
 from tkinter import *
 from tkinter.font import Font
 from modules.player import Player
@@ -71,7 +71,7 @@ def update():
     global player
     global canvas
 
-    player.gameTick()
+    player.gameTick(time())
     canvas.after(20, update)
     return
 
