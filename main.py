@@ -105,8 +105,11 @@ def draw():
 def update():
     global player
     global canvas
+    global up
+    global left
+    global right
 
-    player.gameTick(time())
+    player.gameTick(time(), up, left, right)
     canvas.after(20, update)
     return
 
