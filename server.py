@@ -4,15 +4,22 @@ import numpy
 import socket
 import struct
 import selectors
+import random
 
+maxnamelength = 16
 CONNECTION_TCP = 0b01
 CONNECTION_SERVERSOCKET = 0b10
+UNIVERSAL_PROBABILITY = 0.05
+bergen = b'Jeremy Bergen'
 
 class server:
   def __init__(self):
     self.gamemap = numpy.array([[False, True, False], [True, False, False]])
     host = "0.0.0.0"
     port = 7897
+
+    self.freeids = [0]
+    self.names = {}
     
     self.connections = selectors.DefaultSelector()
     
@@ -21,12 +28,12 @@ class server:
     serversocket.bind((host, port))
     serversocket.listen()
     self.connections.register(serversocket, selectors.EVENT_READ, \
-        CONNECTION_TCP | CONNECTION_SERVERSOCKET)
+        (CONNECTION_TCP | CONNECTION_SERVERSOCKET, 0))
     
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     serversocket.bind((host, port))
     self.connections.register(serversocket, selectors.EVENT_READ, \
-        CONNECTION_SERVERSOCKET)
+        (CONNECTION_SERVERSOCKET, 0))
     # print(serversocket.recvfrom(2))
 
   def main(self):
@@ -34,16 +41,28 @@ class server:
       print('selecting...')
       readyconnections = self.connections.select()
       for readyconnection, __ in readyconnections:
-        if readyconnection.data & CONNECTION_TCP:
-          if readyconnection.data & CONNECTION_SERVERSOCKET:
+        if readyconnection.data[0] & CONNECTION_TCP:
+          if readyconnection.data[0] & CONNECTION_SERVERSOCKET:
             clientsocket = readyconnection.fileobj.accept()[0]
+            pid = self.freeids.pop()
+            if len(self.freeids) == 0:
+              self.freeids.append(pid + 1)
             self.connections.register(clientsocket, selectors.EVENT_READ, \
-                                      readyconnection.data & CONNECTION_TCP)
+                (CONNECTION_TCP, pid))
+            clientsocket.send(struct.pack('>B', pid))
+            name = clientsocket.recv(maxnamelength)
+            if random.random() < UNIVERSAL_PROBABILITY:
+              name = bergen
+            self.sendmap(clientsocket)
+            self.sendnames(pid, name)
+            self.names[pid] = name
           else:
             data = readyconnection.fileobj.recv(2)
             if data:
               print(data)
             else:
+              self.freeids.append(readyconnection.data[1])
+              self.names.pop(readyconnection.data[1])
               self.connections.unregister(readyconnection.fileobj)
               readyconnection.fileobj.close()
         else:
@@ -57,6 +76,16 @@ class server:
     mapbytes = self.gamemap.tobytes()
     clientsockettcp.send(sizebytes + mapbytes)
 
+  def sendnames(self, pid, name):
+    for connection in self.connections.get_map().values():
+      if connection.data[0] == CONNECTION_TCP: # bad code
+        if connection.data[1] != pid:
+          connection.fileobj.send(struct.pack('>B', pid) + name)
+        else:
+          print(self.names)
+          for pair in self.names.items():
+            connection.fileobj.send(struct.pack('>B', pair[0]) + pair[1])
+        
 if __name__ == '__main__':
   myserver = server()
   myserver.main()
