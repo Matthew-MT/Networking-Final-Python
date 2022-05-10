@@ -41,24 +41,35 @@ class Player:
 
     def updateVelAndAcc(self, nextTime, up, left, right):
         scalar = nextTime - self.lastTime
+        mv = self.mv
+        ma = self.ma
+
         if not (left and right):
             if left:
-                self.xa = -self.ma
+                self.xa = -ma
             elif right:
-                self.xa = self.ma
+                self.xa = ma
             else:
-                self.xa = 0
-        if up and self.checkIfGround():
-            self.ya = -self.ma
-        else:
-            self.ya = self.ma
+                self.xa = 0.0
+                if self.xv > ma:
+                    self.xv = self.xv - ma
+                elif self.xv > 0.0:
+                    self.xv = 0.0
+                elif self.xv < -ma:
+                    self.xv = self.xv + ma
+                elif self.xv < 0.0:
+                    self.xv = 0.0
 
-        self.xv = self.xv + self.xa
-        self.yv = self.yv + self.ya
+        if up and self.checkIfGround():
+            self.ya = -ma
+        else:
+            self.ya = ma
+
+        self.xv = self.xv + (self.xa * scalar)
+        self.yv = self.yv + (self.ya * scalar)
 
         xv = self.xv
         yv = self.yv
-        mv = self.mv
 
         if xv > mv:
             self.xv = mv
@@ -70,21 +81,28 @@ class Player:
         elif yv < -mv:
             self.yv = -mv
         
-        newPos = [self.pos[0] + self.xv, self.pos[1] + self.yv]
+        xv = (self.xv * scalar)
+        yv = (self.yv * scalar)
+
+        newPos = [self.pos[0] + xv, self.pos[1] + yv]
         
         while self.tileMap.checkCollision(newPos)\
-        and abs(self.xv) > 0.1:
+        and abs(xv) > 0.01:
+            xv = xv / 2.0
             self.xv = self.xv / 2.0
-            newPos[0] = newPos[0] - self.xv
+            newPos[0] = newPos[0] - xv
 
         while self.tileMap.checkCollision(newPos)\
-        and abs(self.yv) > 0.1:
+        and abs(yv) > 0.01:
+            yv = yv / 2.0
             self.yv = self.yv / 2.0
-            newPos[1] = newPos[1] - self.yv
+            newPos[1] = newPos[1] - yv
 
-        if abs(self.xv) <= 0.1:
+        if abs(xv) <= 0.01:
+            self.xv = 0.0
             newPos[0] = 0.0
-        if abs(self.yv) <= 0.1:
+        if abs(yv) <= 0.01:
+            self.yv = 0.0
             newPos[1] = 0.0
 
         self.pos = newPos
