@@ -6,7 +6,7 @@ import struct
 import selectors
 import random
 
-import modules.constants
+from modules import constants
 
 CONNECTION_TCP = 0b01
 CONNECTION_SERVERSOCKET = 0b10
@@ -49,9 +49,9 @@ class server:
             self.connections.register(clientsocket, selectors.EVENT_READ, \
                 (CONNECTION_TCP, pid))
             clientsocket.send(struct.pack('>B', pid))
-            name = clientsocket.recv(modules.constants.maxnamelength)
-            if random.random() < modules.constants.UNIVERSAL_PROBABILITY:
-              name = modules.constants.bergen
+            name = clientsocket.recv(constants.maxnamelength)
+            if random.random() < constants.UNIVERSAL_PROBABILITY:
+              name = constants.bergen
             self.sendmap(clientsocket)
             self.sendnames(pid, name)
             self.names[pid] = name

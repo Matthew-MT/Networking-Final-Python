@@ -10,11 +10,9 @@ import time
 if __name__ == '__main__':
   import constants
 else:
-  import modules.constants
+  from modules import constants
 
-maxnamelength = 16
 defaulthost = "127.0.0.1"
-bergenchance = 0.05
 
 class networking:
   id: int
@@ -22,7 +20,7 @@ class networking:
   tcplistener: selectors.DefaultSelector
   
   def __init__(self, playername = 'Jeremy Bergen'):
-    everyonesbergen = random.random() < bergenchance
+    everyonesbergen = random.random() < constants.UNIVERSAL_PROBABILITY
     host: str = input("Enter the destination ip address " \
         + f"(or blank for {defaulthost}): ")
     if host == "":
@@ -37,8 +35,8 @@ class networking:
     print(self.id)
 
     playername = playername.encode()
-    if len(playername) > 16:
-      playername = b'Jeremy Bergen'
+    if len(playername) > constants.maxnamelength:
+      playername = constants.bergen
     self.sockettcp.send(playername)
 
     self.sockudp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -63,7 +61,10 @@ class networking:
   def checknewnames(self):
     result = self.tcplistener.select(0)
     if len(result) > 0:
-      print(result[0][0].fileobj.recv(maxnamelength + 1))
+      print(result[0][0].fileobj.recv(constants.maxnamelength + 1))
+
+  def sendkillsignal(self, playerid):
+    self.sockettcp = socket.send(struct.pack(">B", playerid))
     
   # def recievesomething(self):
   #   mybuffer = self.sock.recv(1024)
