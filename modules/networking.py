@@ -7,6 +7,11 @@ import random
 import selectors
 import time
 
+if __name__ == '__main__':
+  import constants
+else:
+  import modules.constants
+
 maxnamelength = 16
 defaulthost = "127.0.0.1"
 bergenchance = 0.05
@@ -16,14 +21,14 @@ class networking:
   everyonesbergen: bool
   tcplistener: selectors.DefaultSelector
   
-  def __init__(self, playername):
+  def __init__(self, playername = 'Jeremy Bergen'):
     everyonesbergen = random.random() < bergenchance
     host: str = input("Enter the destination ip address " \
         + f"(or blank for {defaulthost}): ")
     if host == "":
       host = defaulthost
     port: int = 7897
-    # self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
     self.sockettcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.sockettcp.connect((host, port))
     self.id = struct.unpack('>B', self.sockettcp.recv(1))[0]
