@@ -71,9 +71,9 @@ class server:
             self.sendnames(pid, name)
             self.names[pid] = name
           else:
-            data = readyconnection.fileobj.recv(2)
+            data = readyconnection.fileobj.recv(1)
             if data:
-              print(data)
+                self.sendkill(struct.unpack('>B', data))
             else:
               self.freeids.append(readyconnection.data[1])
               self.names.pop(readyconnection.data[1])
@@ -94,11 +94,14 @@ class server:
     for connection in self.connections.get_map().values():
       if connection.data[0] == CONNECTION_TCP: # bad code
         if connection.data[1] != pid:
-          connection.fileobj.send(struct.pack('>B', pid) + name)
+          connection.fileobj.send(struct.pack('>BB', constants.NAMEUPDATE, \
+              pid) + name)
         else:
           print(self.names)
           for pair in self.names.items():
             connection.fileobj.send(struct.pack('>B', pair[0]) + pair[1])
+  def sendkill(self, pid):
+    print(f'Killing player {pid}')
         
 if __name__ == '__main__':
   myserver = server()

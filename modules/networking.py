@@ -35,8 +35,8 @@ class networking:
     print(self.id)
 
     playername = playername.encode()
-    if len(playername) > constants.maxnamelength:
-      playername = constants.bergen
+    if len(playername) > constants.MAXNAMELENGTH or len(playername) == 0:
+      playername = constants.BERGEN
     self.sockettcp.send(playername)
 
     self.sockudp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -58,10 +58,12 @@ class networking:
     # return dict(players = dict
     # return [[0, "name", [4, 6], [[4, 6], [4, 666], [5, 77]]]]
 
-  def checknewnames(self):
+  def checktcpstuff(self, playerclass):
     result = self.tcplistener.select(0)
     if len(result) > 0:
-      print(result[0][0].fileobj.recv(constants.maxnamelength + 1))
+      mode = struct.unpack('>B', result[0][0].fileobj.recv(1))
+      if mode == 0:
+        print(result[0][0].fileobj.recv(constants.MAXNAMELENGTH + 1))
 
   def sendkillsignal(self, playerid):
     self.sockettcp = socket.send(struct.pack(">B", playerid))
@@ -75,5 +77,5 @@ if __name__ == '__main__':
   mynetworking = networking(input("What's your name?: "))
   print(mynetworking.receivemap())
   while True:
-    mynetworking.checknewnames()
+    mynetworking.checktcpstuff('')
     time.sleep(1)

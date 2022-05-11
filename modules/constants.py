@@ -1,7 +1,7 @@
-maxnamelength = 16
+MAXNAMELENGTH = 16
 UNIVERSAL_PROBABILITY = 0.05
-bergen = b'Jeremy Bergen'
-nameupdate = 0
-killsignal = 1
-screenwidth = 100000000
-screenheight = 1
+BERGEN = b'Jeremy Bergen'
+NAMEUPDATE = 0
+KILLSIGNAL = 1
+SCREENWIDTH = 100000000
+SCREENHEIGHT = 1
