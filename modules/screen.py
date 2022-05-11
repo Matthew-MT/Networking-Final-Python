@@ -14,7 +14,7 @@ class TileMap:
         for x in range(0, len(self.matrix)):
             for y in range(0, len(self.matrix[0])):
                 if not self.matrix[x][y]:
-                    self.openTiles.append(tuple(x, y))
+                    self.openTiles.append((x, y))
         pass
     
     def checkCollision(self, rect: tuple) -> bool:
