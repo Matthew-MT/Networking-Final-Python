@@ -60,6 +60,8 @@ def submitted():
     global network
     global canvas
     global root
+    global screen
+    global player
 
     val: str = nameInput.get()
 
@@ -74,6 +76,8 @@ def submitted():
 
     root.bind("<KeyPress>", keyPress)
     root.bind("<KeyRelease>", keyRelease)
+    
+    update()
 
     return
 
@@ -116,7 +120,5 @@ def update():
     player.gameTick(time(), up, left, right)
     canvas.after(20, update)
     return
-
-update()
 
 root.mainloop()
