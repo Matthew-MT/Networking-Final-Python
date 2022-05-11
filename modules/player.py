@@ -39,7 +39,7 @@ class Player:
 
     def gameTick(self, curTime, up, left, right):
         self.network.playerdata(self)
-        # self.updateVelAndAcc(curTime, up, left, right)
+        self.updateVelAndAcc(curTime, up, left, right)
         return
 
     def updateVelAndAcc(self, nextTime, up, left, right):
