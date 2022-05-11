@@ -15,6 +15,8 @@ font = Font(family="Sans Serif", size=28)
 network: networking
 screen: TileMap
 player: Player
+view: tuple
+background: list
 
 nameInput = Entry()
 nameInput.grid_location(320 - nameInput.winfo_height(), 320 - nameInput.winfo_width())
@@ -62,6 +64,8 @@ def submitted():
     global root
     global screen
     global player
+    global view
+    global background
 
     val: str = nameInput.get()
 
@@ -71,6 +75,12 @@ def submitted():
     network = networking(val)
     screen = TileMap(network, 80)
     player = Player((40, 40), network, screen)
+    view = player.getView()
+    background = screen.getDrawScreen(view)
+
+    for column in background:
+        for tile in column:
+            canvas.create_rectangle(tile[0], tile[1], tile[2], tile[3], fill=tile[4], tags="redraw")
 
     canvas.pack(padx=20, pady=20)
 
@@ -83,13 +93,6 @@ def submitted():
 
 submit = Button(root, text="Submit", command=submitted)
 submit.pack()
-
-
-view: tuple = player.getView()
-background: list = screen.getDrawScreen(view)
-for column in background:
-    for tile in column:
-        canvas.create_rectangle(tile[0], tile[1], tile[2], tile[3], fill=tile[4], tags="redraw")
 
 def draw():
     global screen
