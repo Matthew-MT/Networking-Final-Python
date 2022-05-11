@@ -116,7 +116,8 @@ class server:
         else:
           print(self.names)
           for pair in self.names.items():
-            connection.fileobj.send(struct.pack('>B', pair[0]) + pair[1])
+            connection.fileobj.send(struct.pack('>BB', constants.NAMEUPDATE, \
+                pair[0]) + pair[1])
   def sendkill(self, pid):
     print(f'Killing player {pid}')
         

@@ -37,6 +37,8 @@ class networking:
     playername = playername.encode()
     if len(playername) > constants.MAXNAMELENGTH or len(playername) == 0:
       playername = constants.BERGEN
+    else:
+      playername = playername.ljust(constants.MAXNAMELENGTH)
     self.sockettcp.send(playername)
 
     self.sockudp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -61,7 +63,7 @@ class networking:
   def checktcpstuff(self, playerclass):
     result = self.tcplistener.select(0)
     if len(result) > 0:
-      mode = struct.unpack('>B', result[0][0].fileobj.recv(1))
+      mode = struct.unpack('>B', result[0][0].fileobj.recv(1))[0]
       if mode == 0:
         print(result[0][0].fileobj.recv(constants.MAXNAMELENGTH + 1))
 
