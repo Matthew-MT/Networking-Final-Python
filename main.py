@@ -13,6 +13,8 @@ root.geometry("640x640")
 font = Font(family="Sans Serif", size=28)
 
 network: networking
+screen: TileMap
+player: Player
 
 nameInput = Entry()
 nameInput.grid_location(320 - nameInput.winfo_height(), 320 - nameInput.winfo_width())
@@ -65,6 +67,8 @@ def submitted():
     submit.pack_forget()
 
     network = networking(val)
+    screen = TileMap(network, 80)
+    player = Player((40, 40), network, screen)
 
     canvas.pack(padx=20, pady=20)
 
@@ -76,8 +80,6 @@ def submitted():
 submit = Button(root, text="Submit", command=submitted)
 submit.pack()
 
-screen = TileMap(network, 80)
-player = Player((40, 40), network, screen)
 
 view: tuple = player.getView()
 background: list = screen.getDrawScreen(view)
