@@ -1,7 +1,7 @@
 from time import time
 from random import randint
 from modules.networking import networking
-from screen import TileMap
+from modules.screen import TileMap
 
 class Player:
     name: str = ""
