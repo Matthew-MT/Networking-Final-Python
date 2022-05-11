@@ -1,6 +1,6 @@
 from time import time
 from random import randint
-from networking import networking
+from modules.networking import networking
 from screen import TileMap
 
 class Player:
@@ -11,6 +11,7 @@ class Player:
     network: networking
     tileMap: TileMap
     lastTime: int = time()
+    score: int = 0
 
     xv: float = 0.0
     yv: float = 0.0

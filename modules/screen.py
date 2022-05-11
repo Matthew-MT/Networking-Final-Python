@@ -1,5 +1,5 @@
 from math import floor
-from networking import networking
+from modules.networking import networking
 
 class TileMap:
     tileSize: float
