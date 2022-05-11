@@ -49,9 +49,9 @@ class server:
             self.connections.register(clientsocket, selectors.EVENT_READ, \
                 (CONNECTION_TCP, pid))
             clientsocket.send(struct.pack('>B', pid))
-            name = clientsocket.recv(constants.maxnamelength)
+            name = clientsocket.recv(constants.MAXNAMELENGTH)
             if random.random() < constants.UNIVERSAL_PROBABILITY:
-              name = constants.bergen
+              name = constants.BERGEN
             self.sendmap(clientsocket)
             self.sendnames(pid, name)
             self.names[pid] = name
