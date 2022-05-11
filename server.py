@@ -13,7 +13,22 @@ CONNECTION_SERVERSOCKET = 0b10
 
 class server:
   def __init__(self):
-    self.gamemap = numpy.array([[False, True, False], [True, False, False]])
+    self.gamemap = numpy.array(
+      [
+        [False, True , False, False, True , True , False, True , False, False, False, False],
+        [False, False, True , False, False, False, False, True , False, False, True , True ],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, True , False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, True , True , True , False, False, False, False, False, False, False, False]
+      ]
+    )
     host = "0.0.0.0"
     port = 7897
 
