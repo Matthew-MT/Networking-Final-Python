@@ -25,7 +25,7 @@ class Player:
         self.pos = (0, 0)
         self.size = (initSize[0], initSize[1])
         self.network = initNetwork
-        self.otherPlayers = self.network.receivePlayerData()
+        self.otherPlayers = self.network.playerdata(self)
         self.tileMap = initTileMap
         self.respawn()
         pass
@@ -87,13 +87,13 @@ class Player:
 
         newPos = [self.pos[0] + xv, self.pos[1] + yv]
         
-        while self.tileMap.checkCollision(newPos)\
+        while self.tileMap.checkCollision(newPos, self.size)\
         and abs(xv) > 0.01:
             xv = xv / 2.0
             self.xv = self.xv / 2.0
             newPos[0] = newPos[0] - xv
 
-        while self.tileMap.checkCollision(newPos)\
+        while self.tileMap.checkCollision(newPos, self.size)\
         and abs(yv) > 0.01:
             yv = yv / 2.0
             self.yv = self.yv / 2.0
@@ -110,7 +110,7 @@ class Player:
         return
     
     def checkIfGround(self):
-        return self.tileMap.checkCollision((self.pos[0], self.pos[1] + 1, self.size[0], self.size[1]))
+        return self.tileMap.checkCollision((self.pos[0], self.pos[1] + 1), self.size)
 
     def respawn(self):
         openTiles = self.tileMap.openTiles

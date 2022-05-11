@@ -17,28 +17,28 @@ class TileMap:
                     self.openTiles.append((x, y))
         pass
     
-    def checkCollision(self, rect: tuple) -> bool:
+    def checkCollision(self, pos: tuple, size: tuple) -> bool:
         offset = (
-            rect[0] % self.tileSize,
-            rect[1] % self.tileSize,
-            (rect[0] + rect[2]) % self.tileSize,
-            (rect[1] + rect[3]) % self.tileSize
+            pos[0] % self.tileSize,
+            pos[1] % self.tileSize,
+            (pos[0] + size[0]) % self.tileSize,
+            (pos[1] + size[1]) % self.tileSize
         )
 
         tileIdx = (
             (
-                floor((rect[0] - offset[0]) / self.tileSize),
-                floor((rect[1] - offset[1]) / self.tileSize)
+                floor((pos[0] - offset[0]) / self.tileSize),
+                floor((pos[1] - offset[1]) / self.tileSize)
             ),
             (
-                floor(((rect[0] + rect[2]) - offset[2]) / self.tileSize),
-                floor(((rect[1] + rect[3]) - offset[3]) / self.tileSize)
+                floor(((pos[0] + size[0]) - offset[2]) / self.tileSize),
+                floor(((pos[1] + size[1]) - offset[3]) / self.tileSize)
             )
         )
 
         if tileIdx[0][0] < 0 or tileIdx[0][1] < 0\
-        or tileIdx[1][0] > len(self.matrix)\
-        or tileIdx[1][1] > len(self.matrix[0])\
+        or tileIdx[1][0] > len(self.matrix) - 1\
+        or tileIdx[1][1] > len(self.matrix[0]) - 1\
         or self.matrix[tileIdx[0][0]][tileIdx[0][1]]\
         or self.matrix[tileIdx[0][0]][tileIdx[1][1]]\
         or self.matrix[tileIdx[1][0]][tileIdx[0][1]]\
@@ -54,16 +54,16 @@ class TileMap:
             (rect[1] + rect[3]) % self.tileSize
         )
 
-        tileBounds = (
-            (
+        tileBounds = [
+            [
                 floor((rect[0] - offset[0]) / self.tileSize),
                 floor((rect[1] - offset[1]) / self.tileSize)
-            ),
-            (
+            ],
+            [
                 floor((rect[2] - offset[2]) / self.tileSize),
                 floor((rect[3] - offset[3]) / self.tileSize)
-            )
-        )
+            ]
+        ]
 
         if tileBounds[0][0] < 0:
             tileBounds[0][0] = 0
@@ -84,7 +84,7 @@ class TileMap:
                     fill = "black"
                 elif self.matrix[x][y] == 0:
                     fill = "white"
-                drawMatrix[x].append(tuple(
+                drawMatrix[x].append((
                     (x * self.tileSize) - offset[0],
                     (y * self.tileSize) - offset[1],
                     ((x + 1) * self.tileSize) - offset[0],

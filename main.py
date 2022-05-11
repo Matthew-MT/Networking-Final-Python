@@ -75,7 +75,7 @@ def submitted():
     network = networking(val)
     screen = TileMap(network, 80)
     player = Player((40, 40), network, screen)
-    view = player.getView()
+    view = player.getView(600, 600)
     background = screen.getDrawScreen(view)
 
     for column in background:
@@ -102,7 +102,7 @@ def draw():
     global background
 
     canvas.delete("redraw")
-    nextView = player.getView()
+    nextView = player.getView(600, 600)
 
     if abs(nextView[0] - view[0]) > 0.2\
     or abs(nextView[1] - view[1]) > 0.2:
