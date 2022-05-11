@@ -32,8 +32,6 @@ class server:
     )"""
     self.gamemap = numpy.array(
       [
-        [False, False , False, False, False , False , False, False , False, False, False, False],
-        [False, False, False , False, False, False, False, False , False, False, False , False ],
         [False, False, False, False, False, False, False, False, False, False, False, False],
         [False, False, False, False, False, False, False, False, False, False, False, False],
         [False, False, False, False, False, False, False, False, False, False, False, False],
@@ -41,9 +39,11 @@ class server:
         [False, False, False, False, False, False, False, False, False, False, False, False],
         [False, False, False, False, False, False, False, False, False, False, False, False],
         [False, False, False, False, False, False, False, False, False, False, False, False],
-        [False, False, False, False , False, False, False, False, False, False, False, False],
         [False, False, False, False, False, False, False, False, False, False, False, False],
-        [False, False , False , False , False, False, False, False, False, False, False, False]
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False]
       ]
     )
     host = "0.0.0.0"

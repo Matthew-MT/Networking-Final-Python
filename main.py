@@ -78,11 +78,12 @@ def submitted():
     view = player.getView(600, 600)
     background = screen.getDrawScreen(view)
 
+    canvas.pack(padx=20, pady=20)
+
     for column in background:
         for tile in column:
             canvas.create_rectangle(tile[0], tile[1], tile[2], tile[3], fill=tile[4], tags="redraw")
-
-    canvas.pack(padx=20, pady=20)
+    canvas.create_rectangle(280, 280, 320, 320, fill="black", tags="redraw")
 
     root.bind("<KeyPress>", keyPress)
     root.bind("<KeyRelease>", keyRelease)
@@ -101,16 +102,17 @@ def draw():
     global view
     global background
 
-    canvas.delete("redraw")
     nextView = player.getView(600, 600)
 
     if abs(nextView[0] - view[0]) > 0.2\
     or abs(nextView[1] - view[1]) > 0.2:
+        canvas.delete("redraw")
         view = nextView
         background = screen.getDrawScreen(view)
         for column in background:
             for tile in column:
                 canvas.create_rectangle(tile[0], tile[1], tile[2], tile[3], fill=tile[4], tags="redraw")
+        canvas.create_rectangle(280, 280, 320, 320, fill="black", tags="redraw")
     return
 
 def update():

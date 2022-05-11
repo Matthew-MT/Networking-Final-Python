@@ -22,8 +22,7 @@ class Player:
     ma: float = 2.0
 
     def __init__(self, initSize, initNetwork, initTileMap) -> None:
-        self.pos = (0, 0)
-        self.size = (initSize[0], initSize[1])
+        self.size = initSize
         self.network = initNetwork
         self.otherPlayers = self.network.playerdata(self)
         self.tileMap = initTileMap
@@ -31,7 +30,10 @@ class Player:
         pass
 
     def getView(self, scrW, scrH):
-        center = (self.pos[0] + (self.size[0] / 2), self.pos[1] + (self.size[1] / 2))
+        center = (
+            self.pos[0] + (self.size[0] / 2),
+            self.pos[1] + (self.size[1] / 2)
+        )
         origin = (center[0] - (scrW / 2), center[1] - (scrH / 2))
         return (origin[0], origin[1], origin[0] + scrW, origin[1] + scrH)
 
@@ -114,6 +116,10 @@ class Player:
 
     def respawn(self):
         openTiles = self.tileMap.openTiles
+        tileSize = self.tileMap.tileSize
         tile = openTiles[randint(0, len(openTiles) - 1)]
-        self.pos = (tile[0], tile[1])
+        self.pos = (
+            (tile[0] * tileSize) + ((tileSize - self.size[0]) / 2),
+            (tile[1] * tileSize) + ((tileSize - self.size[1]) / 2)
+        )
         return

@@ -1,4 +1,4 @@
-from math import floor
+from math import floor, ceil
 from modules.networking import networking
 
 class TileMap:
@@ -27,12 +27,12 @@ class TileMap:
 
         tileIdx = (
             (
-                floor((pos[0] - offset[0]) / self.tileSize),
-                floor((pos[1] - offset[1]) / self.tileSize)
+                floor((pos[0] - offset[0]) / self.tileSize) - 2,
+                floor((pos[1] - offset[1]) / self.tileSize) - 2
             ),
             (
-                floor(((pos[0] + size[0]) - offset[2]) / self.tileSize),
-                floor(((pos[1] + size[1]) - offset[3]) / self.tileSize)
+                floor(((pos[0] + size[0]) - offset[2]) / self.tileSize) + 2,
+                floor(((pos[1] + size[1]) - offset[3]) / self.tileSize) + 2
             )
         )
 
@@ -49,46 +49,53 @@ class TileMap:
     def getDrawScreen(self, rect: tuple):
         offset = (
             rect[0] % self.tileSize,
-            rect[1] % self.tileSize,
-            (rect[0] + rect[2]) % self.tileSize,
-            (rect[1] + rect[3]) % self.tileSize
+            rect[1] % self.tileSize
         )
 
         tileBounds = [
             [
-                floor((rect[0] - offset[0]) / self.tileSize),
-                floor((rect[1] - offset[1]) / self.tileSize)
+                floor(rect[0] / self.tileSize),
+                floor(rect[1] / self.tileSize)
             ],
             [
-                floor((rect[2] - offset[2]) / self.tileSize),
-                floor((rect[3] - offset[3]) / self.tileSize)
+                ceil(rect[2] / self.tileSize),
+                ceil(rect[3] / self.tileSize)
             ]
         ]
 
-        if tileBounds[0][0] < 0:
-            tileBounds[0][0] = 0
-        if tileBounds[0][1] < 0:
-            tileBounds[0][1] = 0
-        if tileBounds[1][0] >= len(self.matrix):
-            tileBounds[1][0] = len(self.matrix) - 1
-        if tileBounds[1][1] >= len(self.matrix[0]):
-            tileBounds[1][1] = len(self.matrix[0]) - 1
-
         drawMatrix: list = []
 
-        for x in range(tileBounds[0][0], tileBounds[1][0]):
+        minX = tileBounds[0][0]
+        minY = tileBounds[0][1]
+
+        bounds = (
+            (
+                max(minX, 0),
+                min(tileBounds[1][0], len(self.matrix))
+            ),
+            (
+                max(minY, 0),
+                min(tileBounds[1][1], len(self.matrix[0]))
+            )
+        )
+
+        for x in range(bounds[0][0], bounds[0][1]):
             drawMatrix.append([])
-            for y in range(tileBounds[0][1], tileBounds[1][1]):
+            for y in range(bounds[1][0], bounds[1][1]):
                 fill: str = ""
                 if self.matrix[x][y] == 1:
                     fill = "black"
                 elif self.matrix[x][y] == 0:
                     fill = "white"
-                drawMatrix[x].append((
-                    (x * self.tileSize) - offset[0],
-                    (y * self.tileSize) - offset[1],
-                    ((x + 1) * self.tileSize) - offset[0],
-                    ((y + 1) * self.tileSize) - offset[1],
+                
+                normX = x - minX
+                normY = y - minY
+                
+                drawMatrix[normX].append((
+                    (normX * self.tileSize) - offset[0],
+                    (normY * self.tileSize) - offset[1],
+                    ((normX + 1) * self.tileSize) - offset[0],
+                    ((normY + 1) * self.tileSize) - offset[1],
                     fill
                 ))
         return drawMatrix
