@@ -12,7 +12,7 @@ root.geometry("640x640")
 
 font = Font(family="Sans Serif", size=28)
 
-network = networking()
+network: networking
 
 nameInput = Entry()
 nameInput.grid_location(320 - nameInput.winfo_height(), 320 - nameInput.winfo_width())
@@ -63,6 +63,8 @@ def submitted():
 
     nameInput.pack_forget()
     submit.pack_forget()
+
+    network = networking(val)
 
     canvas.pack(padx=20, pady=20)
 
