@@ -10,6 +10,7 @@ class TileMap:
         self.tileSize = initTileSize
         self.network = initNetwork
         self.matrix = self.network.receivemap()
+        self.openTiles = []
         for x in range(0, len(self.matrix)):
             for y in range(0, len(self.matrix[0])):
                 if not self.matrix[x][y]:

@@ -121,6 +121,7 @@ def update():
     global right
 
     player.gameTick(time(), up, left, right)
+    draw()
     canvas.after(20, update)
     return
 
