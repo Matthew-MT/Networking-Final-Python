@@ -13,6 +13,7 @@ CONNECTION_SERVERSOCKET = 0b10
 
 class server:
   def __init__(self):
+    """
     self.gamemap = numpy.array(
       [
         [False, True , False, False, True , True , False, True , False, False, False, False],
@@ -27,6 +28,22 @@ class server:
         [False, False, False, True , False, False, False, False, False, False, False, False],
         [False, False, False, False, False, False, False, False, False, False, False, False],
         [False, True , True , True , False, False, False, False, False, False, False, False]
+      ]
+    )"""
+    self.gamemap = numpy.array(
+      [
+        [False, False , False, False, False , False , False, False , False, False, False, False],
+        [False, False, False , False, False, False, False, False , False, False, False , False ],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False , False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False , False , False , False, False, False, False, False, False, False, False]
       ]
     )
     host = "0.0.0.0"
