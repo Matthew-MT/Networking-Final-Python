@@ -49,7 +49,7 @@ class server:
     host = "0.0.0.0"
     port = 7897
 
-    self.freeids = [0]
+    self.freeids = [1]
     self.names = {}
     
     self.connections = selectors.DefaultSelector()
@@ -119,6 +119,9 @@ class server:
             connection.fileobj.send(struct.pack('>BB', constants.NAMEUPDATE, \
                 pair[0]) + pair[1])
   def sendkill(self, pid):
+    for connection in self.connections.get_map().values():
+      if connection.data[1] == pid:
+        connection.fileobj.send(struct.pack('>B', constants.KILLSIGNAL))
     print(f'Killing player {pid}')
         
 if __name__ == '__main__':

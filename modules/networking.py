@@ -15,12 +15,12 @@ else:
 defaulthost = "127.0.0.1"
 
 class networking:
-  id: int
+  pid: int
   everyonesbergen: bool
   tcplistener: selectors.DefaultSelector
   
   def __init__(self, playername = 'Jeremy Bergen'):
-    everyonesbergen = random.random() < constants.UNIVERSAL_PROBABILITY
+    self.everyonesbergen = random.random() < constants.UNIVERSAL_PROBABILITY
     host: str = input("Enter the destination ip address " \
         + f"(or blank for {defaulthost}): ")
     if host == "":
@@ -29,10 +29,10 @@ class networking:
 
     self.sockettcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.sockettcp.connect((host, port))
-    self.id = struct.unpack('>B', self.sockettcp.recv(1))[0]
+    self.pid = struct.unpack('>B', self.sockettcp.recv(1))[0]
     self.tcplistener = selectors.DefaultSelector()
     self.tcplistener.register(self.sockettcp, selectors.EVENT_READ)
-    print(self.id)
+    print(self.pid)
 
     playername = playername.encode()
     if len(playername) > constants.MAXNAMELENGTH or len(playername) == 0:
@@ -56,7 +56,7 @@ class networking:
     return gamemap.tolist()
 
   def playerdata(self, playerclass) -> None:
-    pass
+    self.checktcpstuff(playerclass)
     # return dict(players = dict
     # return [[0, "name", [4, 6], [[4, 6], [4, 666], [5, 77]]]]
 
@@ -64,8 +64,17 @@ class networking:
     result = self.tcplistener.select(0)
     if len(result) > 0:
       mode = struct.unpack('>B', result[0][0].fileobj.recv(1))[0]
-      if mode == 0:
+      if mode == constants.NAMEUPDATE:
+        pid = result[0][0].fileobj.recv(1)
+        name = result[0][0].fileobj.recv(constants.MAXNAMELENGTH)
+        if self.everyonesbergen:
+          name = constants.BERGEN
+        print(playerclass.otherPlayers)
+        playerclass.otherPlayers[pid] = dict(name = name)
+        print(playerclass.otherPlayers)
         print(result[0][0].fileobj.recv(constants.MAXNAMELENGTH + 1))
+      elif mode == constants.KILLSIGNAL:
+        print('aaahhh, being killed')
 
   def sendkillsignal(self, playerid):
     self.sockettcp = socket.send(struct.pack(">B", playerid))
@@ -78,6 +87,8 @@ class networking:
 if __name__ == '__main__':
   mynetworking = networking(input("What's your name?: "))
   print(mynetworking.receivemap())
+  from player import Player
+  player = Player(0, networking, 0)
   while True:
-    mynetworking.checktcpstuff('')
+    mynetworking.checktcpstuff(player)
     time.sleep(1)

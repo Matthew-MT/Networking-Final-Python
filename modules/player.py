@@ -23,6 +23,7 @@ class Player:
     ma: float = 1024.0
 
     def __init__(self, initSize, initNetwork, initTileMap) -> None:
+        self.otherPlayers = {}
         self.size = initSize
         self.network = initNetwork
         self.otherPlayers = self.network.playerdata(self)
