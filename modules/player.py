@@ -15,8 +15,8 @@ class Player:
 
     xv: float = 0.0
     yv: float = 0.0
-    mv: float = 768.0
-    tv: float = 2048.0
+    mv: float = 512.0
+    tv: float = 1536.0
 
     xa: float = 0.0
     ya: float = 1536.0
@@ -50,6 +50,7 @@ class Player:
         mv = self.mv
         ma = self.ma
         tv = self.tv
+        jv = tv / 1.84
         fa = ma * scalar
 
         if left and not right:
@@ -72,18 +73,23 @@ class Player:
 
         self.xv = self.xv + (scalar * xa)
 
+        re = True
         if up:
             ground = self.checkIfGround()
             if ground[0]:
-                self.yv = -mv
+                self.yv = -jv
+                re = False
             elif ground[1]:
-                self.yv = -mv / 2.0
-                self.xv = mv / 8.0
+                self.yv = -jv / 1.6
+                self.xv = mv / 2.4
+                re = False
             elif ground[2]:
-                self.yv = -mv / 2.0
-                self.xv = -mv / 8.0
+                self.yv = -jv / 1.6
+                self.xv = -mv / 2.4
+                re = False
         
-        self.yv = self.yv + (scalar * ya)
+        if re:
+            self.yv = self.yv + (scalar * ya)
 
         xv = self.xv
         yv = self.yv
@@ -93,8 +99,8 @@ class Player:
         elif xv < -mv:
             self.xv = -mv
         
-        if yv > mv:
-            self.yv = mv
+        if yv > jv:
+            self.yv = jv
         elif yv < -tv:
             self.yv = -tv
         
