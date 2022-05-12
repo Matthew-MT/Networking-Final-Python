@@ -9,7 +9,7 @@ class Player:
     pos: tuple # (x, y)
     size: tuple # (w, h)
     otherPlayers: dict # {"<id0>": {"name": str, "position": (float, float)}, ...}
-    bullets: list # [{"pos": (x, y), "vel": (xv, yv)}, ...]
+    bullets: list = [] # [{"pos": (x, y), "vel": (xv, yv)}, ...]
     network: networking
     tileMap: TileMap
     lastTime: int = time()
@@ -155,6 +155,10 @@ class Player:
         for bullet in self.bullets:
             pos = bullet["pos"]
             vel = bullet["vel"]
+            dist = 0
+            r = 0
+            for id, player in self.otherPlayers:
+                if vel[0] == 0 or vel[1] == 0:
 
         return
     
