@@ -29,9 +29,9 @@ class Player:
     def __init__(self, initSize, initNetwork, initTileMap) -> None:
         self.size = initSize
         self.network = initNetwork
-        self.otherPlayers = self.network.playerdata(self)
         self.tileMap = initTileMap
         self.respawn()
+        self.otherPlayers = self.network.playerdata(self)
         pass
 
     def getView(self, scrW, scrH):
@@ -142,11 +142,20 @@ class Player:
         return
     
     def shoot(self, target):
+        if len(self.bullets) >= 256:
+            return
         normVect = (target / sqrt((target[0] * target[0]) + (target[1] + target[1]))) * 4096
         self.bullets.append({
             "pos": self.pos,
             "vel": normVect
         })
+        return
+    
+    def updateBullets(self):
+        for bullet in self.bullets:
+            pos = bullet["pos"]
+            vel = bullet["vel"]
+
         return
     
     def checkIfGround(self):
