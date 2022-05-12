@@ -21,14 +21,14 @@ class networking:
   
   def __init__(self, playername = 'Jeremy Bergen'):
     self.everyonesbergen = random.random() < constants.UNIVERSAL_PROBABILITY
-    host: str = input("Enter the destination ip address " \
+    self.host: str = input("Enter the destination ip address " \
         + f"(or blank for {defaulthost}): ")
-    if host == "":
-      host = defaulthost
-    port: int = 7897
+    if self.host == "":
+      self.host = defaulthost
+    self.port: int = 7897
 
     self.sockettcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    self.sockettcp.connect((host, port))
+    self.sockettcp.connect((self.host, self.port))
     self.pid = struct.unpack('>B', self.sockettcp.recv(1))[0]
     self.tcplistener = selectors.DefaultSelector()
     self.tcplistener.register(self.sockettcp, selectors.EVENT_READ)
@@ -63,7 +63,7 @@ class networking:
     for bullet in playerclass.bullets:
       bytestosend += struct.pack('>hh', int(bullet['pos'][0]), \
           int(bullet['pos'][1]))
-    self.sockudp.sendto(bytestosend, (host, port))
+    self.sockudp.sendto(bytestosend, (self.host, self.port))
     self.recieveplayerdata(playerclass)
     # return dict(players = dict
     # return [[0, "name", [4, 6], [[4, 6], [4, 666], [5, 77]]]]
@@ -72,11 +72,13 @@ class networking:
     numplayers = struct.unpack('>B', self.sockudp.recv(1)[0])[0]
     for i in range(numplayers):
       pid, numbullets = struct.unpack('>BB', self.sockudp.recv(2)[0])
-      position = struct.unpack('>hh', self.sockudp.recv[2][0])
+      position = struct.unpack('>hh', self.sockudp.recv(2)[0])
       playerclass.otherPlayers[pid]['position'] = (float(position[0]), \
           float(position[1]))
-      for j in range numbullets:
-        pass
+      playerclass.otherBullets = [(0, 0)] * numbullets
+      for j in range(numbullets):
+        position = struct.unpack('>hh', self.sockudp.recv(2)[0])
+        playerclass.otherBullets[j] = (float(position[0]), float(position[1]))
 
   def checktcpstuff(self, playerclass):
     result = self.tcplistener.select(0)
