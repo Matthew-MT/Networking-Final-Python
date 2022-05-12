@@ -28,6 +28,9 @@ canvas.create_rectangle(0, 0, 600, 600, fill="black")
 up: bool = False
 left: bool = False
 right: bool = False
+click: bool = False
+clickQueued: bool = False
+clickCoords: tuple = (0, 0)
 
 def keyPress(event):
     global up
@@ -46,6 +49,7 @@ def keyRelease(event):
     global up
     global left
     global right
+    global click
     keyName = event.keysym
     if keyName == "Up":
         up = False
@@ -53,6 +57,22 @@ def keyRelease(event):
         left = False
     elif keyName == "Right":
         right = False
+    return
+
+def clickPress(event):
+    global click
+    global clickQueued
+    global clickCoords
+    if event.num == 1:
+        click = True
+        clickQueued = True
+        clickCoords = (event.x, event.y)
+    return
+
+def clickRelease(event):
+    global click
+    if event.num == 1:
+        click = False
     return
 
 def submitted():
@@ -87,6 +107,8 @@ def submitted():
 
     root.bind("<KeyPress>", keyPress)
     root.bind("<KeyRelease>", keyRelease)
+    root.bind("<Button>", clickPress)
+    root.bind("<ButtonRelease>", clickRelease)
     
     update()
 
@@ -121,8 +143,12 @@ def update():
     global up
     global left
     global right
+    global click
+    global clickQueued
+    global clickCoords
 
-    player.gameTick(time(), up, left, right)
+    player.gameTick(time(), up, left, right, click or clickQueued, clickCoords)
+    clickQueued = False
     draw()
     canvas.after(20, update)
     return
