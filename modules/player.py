@@ -1,3 +1,4 @@
+from cmath import sqrt
 from time import time
 from random import randint
 from modules.networking import networking
@@ -8,10 +9,13 @@ class Player:
     pos: tuple # (x, y)
     size: tuple # (w, h)
     otherPlayers: dict # {"<id0>": {"name": str, "position": (float, float)}, ...}
+    bullets: list # [{"pos": (x, y), "vel": (xv, yv)}, ...]
     network: networking
     tileMap: TileMap
     lastTime: int = time()
     score: int = 0
+    cooldown: int = 200
+    remCool: int = 0
 
     xv: float = 0.0
     yv: float = 0.0
@@ -39,14 +43,19 @@ class Player:
         origin = (center[0] - (scrW / 2), center[1] - (scrH / 2))
         return (origin[0], origin[1], origin[0] + scrW, origin[1] + scrH)
 
-    def gameTick(self, curTime, up, left, right):
+    def gameTick(self, curTime, up, left, right, click, target):
         self.network.playerdata(self)
         self.updateVelAndAcc(curTime, up, left, right)
+        if self.remCool <= 0 and click:
+            self.shoot(target)
+            self.remCool = self.cooldown
+        elif self.remCool > 0:
+            self.remCool = self.remCool - (curTime - self.lastTime) * 1000
+        self.lastTime = curTime
         return
 
     def updateVelAndAcc(self, nextTime, up, left, right):
         scalar = nextTime - self.lastTime
-        self.lastTime = nextTime
         mv = self.mv
         ma = self.ma
         tv = self.tv
@@ -131,6 +140,14 @@ class Player:
             newY[1] = self.pos[1]
 
         self.pos = (newX[0], newY[1])
+        return
+    
+    def shoot(self, target):
+        normVect = (target / sqrt((target[0] * target[0]) + (target[1] + target[1]))) * 4096
+        self.bullets.append({
+            "pos": self.pos,
+            "vel": normVect
+        })
         return
     
     def checkIfGround(self):
