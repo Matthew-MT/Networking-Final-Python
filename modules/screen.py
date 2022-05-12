@@ -18,33 +18,32 @@ class TileMap:
         pass
     
     def checkCollision(self, pos: tuple, size: tuple) -> bool:
-        offset = (
-            pos[0] % self.tileSize,
-            pos[1] % self.tileSize,
-            (pos[0] + size[0]) % self.tileSize,
-            (pos[1] + size[1]) % self.tileSize
-        )
+        #offset = (
+        #    pos[0] % self.tileSize,
+        #    pos[1] % self.tileSize,
+        #    (pos[0] + size[0]) % self.tileSize,
+        #    (pos[1] + size[1]) % self.tileSize
+        #)
 
         tileIdx = (
             (
-                floor((pos[0] - offset[0]) / self.tileSize) - 2,
-                floor((pos[1] - offset[1]) / self.tileSize) - 2
+                floor(pos[0] / self.tileSize),
+                floor(pos[1] / self.tileSize)
             ),
             (
-                floor(((pos[0] + size[0]) - offset[2]) / self.tileSize) + 2,
-                floor(((pos[1] + size[1]) - offset[3]) / self.tileSize) + 2
+                floor((pos[0] + size[0]) / self.tileSize),
+                floor((pos[1] + size[1]) / self.tileSize)
             )
         )
 
-        if tileIdx[0][0] < 0 or tileIdx[0][1] < 0\
-        or tileIdx[1][0] > len(self.matrix) - 1\
-        or tileIdx[1][1] > len(self.matrix[0]) - 1\
-        or self.matrix[tileIdx[0][0]][tileIdx[0][1]]\
-        or self.matrix[tileIdx[0][0]][tileIdx[1][1]]\
-        or self.matrix[tileIdx[1][0]][tileIdx[0][1]]\
-        or self.matrix[tileIdx[1][0]][tileIdx[1][1]]:
-            return True
-        return False
+        return tileIdx[0][0] < 0\
+            or tileIdx[0][1] < 0\
+            or tileIdx[1][0] > len(self.matrix) - 1\
+            or tileIdx[1][1] > len(self.matrix[0]) - 1\
+            or self.matrix[tileIdx[0][0]][tileIdx[0][1]]\
+            or self.matrix[tileIdx[0][0]][tileIdx[1][1]]\
+            or self.matrix[tileIdx[1][0]][tileIdx[0][1]]\
+            or self.matrix[tileIdx[1][0]][tileIdx[1][1]]
     
     def getDrawScreen(self, rect: tuple):
         offset = (
@@ -90,8 +89,8 @@ class TileMap:
                 
                 normX = x - minX
                 normY = y - minY
-                
-                drawMatrix[normX].append((
+
+                drawMatrix[min(x, normX)].append((
                     (normX * self.tileSize) - offset[0],
                     (normY * self.tileSize) - offset[1],
                     ((normX + 1) * self.tileSize) - offset[0],
