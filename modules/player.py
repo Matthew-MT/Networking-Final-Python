@@ -202,7 +202,12 @@ class Player:
             c = 0
             newBullets: list = []
             for i in range(0, len(self.bullets)):
-                if 
+                if c < len(toDel):
+                    if i < toDel[c]:
+                        newBullets.append(self.bullets[i])
+                    elif i == toDel[c]:
+                        c += 1
+            self.bullets = newBullets
 
         return
     
