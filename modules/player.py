@@ -10,6 +10,7 @@ class Player:
     size: tuple # (w, h)
     otherPlayers: dict # {"<id0>": {"name": str, "position": (float, float)}, ...}
     bullets: list = [] # [{"pos": (x, y), "vel": (xv, yv)}, ...]
+    otherBullets: list # [(x, y), ...]
     network: networking
     tileMap: TileMap
     lastTime: int = time()
@@ -153,13 +154,55 @@ class Player:
         return
     
     def updateBullets(self):
-        for bullet in self.bullets:
-            pos = bullet["pos"]
-            vel = bullet["vel"]
-            dist = 0
-            r = 0
+        r: float = (self.size[0] * self.size[0]) + (self.size[1] * self.size[1])
+        sx, sy = self.size
+        ox = sx / 2.0
+        oy = sy / 2.0
+
+        toDel: list = []
+
+        for i in range(0, len(self.bullets)):
+            bullet = self.bullets[i]
+            collided = False
+            bx, by = bullet["pos"]
+            vx, vy = bullet["vel"]
+            traveled = (vx * vx) + (vy * vy)
             for id, player in self.otherPlayers:
-                if vel[0] == 0 or vel[1] == 0:
+                px, py = player["pos"]
+                cx = px + ox
+                cy = py + oy
+                ax = px + sx
+                ay = py + sy
+                dist = ((cx - bx) * (cx - bx)) + ((cy - by) * (cy - by))
+                if dist <= traveled + r:
+                    if vx == 0:
+                        if abs(bx - cx) <= ox:
+                            self.network.sendkillsignal(id)
+                            self.score += 1
+                            collided = True
+                    elif vy == 0:
+                        if abs(by - cy) <= oy:
+                            self.network.sendkillsignal(id)
+                            self.score += 1
+                            collided = True
+                    else:
+                        x = ((((vy * bx) / vx) + ((vx * cx) / vy) - by) - cy) / ((vy / vx) + (vx / vy))
+                        y = ((vy / vx) * (x - bx)) + by
+
+                        if px <= x and x <= ax\
+                        and py <= y and y <= ay:
+                            self.network.sendkillsignal(id)
+                            self.score += 1
+                            collided = True
+            
+            if collided:
+                toDel.append(i)
+        
+        if len(toDel) > 0:
+            c = 0
+            newBullets: list = []
+            for i in range(0, len(self.bullets)):
+                if 
 
         return
     
