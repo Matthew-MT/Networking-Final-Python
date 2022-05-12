@@ -51,7 +51,7 @@ class server:
 
     self.freeids = [1]
     self.names = dict()
-    self.playerstuff = dict()
+    self.playerstuff = dict() # playerid:bytes
     
     self.connections = selectors.DefaultSelector()
     
@@ -92,18 +92,33 @@ class server:
             try:
               data = readyconnection.fileobj.recv(1)
               if data:
-                self.sendkill(struct.unpack('>B', data))
+                self.sendkill(struct.unpack('>nB', data))
               else:
                 raise ConnectionResetError
             except ConnectionResetError:
               self.senddisconnect(readyconnection.data[1])
               self.freeids.append(readyconnection.data[1])
               self.names.pop(readyconnection.data[1])
+              try:
+                self.playerstuff.pop(readyconnection.data[1])
+              except KeyError:
+                pass
               self.connections.unregister(readyconnection.fileobj)
               readyconnection.fileobj.close()
               
         else:
-          print(readyconnection.fileobj.recvfrom(2))
+          pidbyte, returnadress = readyconnection.fileobj.recvfrom(1)
+          pid = struct.unpack('>B', pidbyte)[0]
+          numbulletsbyte = readyconnection.fileobj.recvfrom(1)[0]
+          numbullets = struct.unpack('>B', numbulletsbyte)
+          playerdata = readyconnection.fileobj.recvfrom(4 + 4 * numbullets)[0]
+          self.playerstuff[pid] = pidbyte + numbulletsbyte + playerdata
+          numplayers = len(self.playerstuff) - 1
+          bytestosend = struct.pack('>B', numplayers)
+          for key, value in self.playerstuff.items():
+            if key != pid:
+              bytestosend += value
+          readyconnection.fileobj.sendto(bytestosend, returnaddress)
     # array = [0, 1, 3]
     # numarray = numpy.array(array)
     # conn.send(numarray.tobytes())

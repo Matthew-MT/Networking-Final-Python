@@ -58,13 +58,25 @@ class networking:
   def playerdata(self, playerclass) -> None:
     print(playerclass.pos)
     self.checktcpstuff(playerclass)
-    bytestosend = struct.pack('>BhhB', self.pid, playerclass.pos[0], \
-        playerclass.pos[1], len(playerclass.bullets))
+    bytestosend = struct.pack('>BBhh', self.pid, len(playerclass.bullets), \
+        int(playerclass.pos[0]), int(playerclass.pos[1]))
     for bullet in playerclass.bullets:
-      bytestosend += struct.pack('>hh', bullet['pos'][0], bullet['pos'][1])
+      bytestosend += struct.pack('>hh', int(bullet['pos'][0]), \
+          int(bullet['pos'][1]))
     self.sockudp.sendto(bytestosend, (host, port))
+    self.recieveplayerdata(playerclass)
     # return dict(players = dict
     # return [[0, "name", [4, 6], [[4, 6], [4, 666], [5, 77]]]]
+    #
+  def recieveplayerdata(self, playerclass) -> None:
+    numplayers = struct.unpack('>B', self.sockudp.recv(1)[0])[0]
+    for i in range(numplayers):
+      pid, numbullets = struct.unpack('>BB', self.sockudp.recv(2)[0])
+      position = struct.unpack('>hh', self.sockudp.recv[2][0])
+      playerclass.otherPlayers[pid]['position'] = (float(position[0]), \
+          float(position[1]))
+      for j in range numbullets:
+        pass
 
   def checktcpstuff(self, playerclass):
     result = self.tcplistener.select(0)
