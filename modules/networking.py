@@ -42,7 +42,7 @@ class networking:
     self.sockettcp.send(playername)
 
     self.sockudp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    self.sockudp.sendto(b'ht', (host, port))
+    # self.sockudp.sendto(b'ht', (host, port))
 
   # def senddata(self, data) -> None:
     # self.sockettcp.send(data.encode)
@@ -56,8 +56,13 @@ class networking:
     return gamemap.tolist()
 
   def playerdata(self, playerclass) -> None:
+    print(playerclass.pos)
     self.checktcpstuff(playerclass)
-    bytestosend =     
+    bytestosend = struct.pack('>BhhB', self.pid, playerclass.pos[0], \
+        playerclass.pos[1], len(playerclass.bullets))
+    for bullet in playerclass.bullets:
+      bytestosend += struct.pack('>hh', bullet['pos'][0], bullet['pos'][1])
+    self.sockudp.sendto(bytestosend, (host, port))
     # return dict(players = dict
     # return [[0, "name", [4, 6], [[4, 6], [4, 666], [5, 77]]]]
 
