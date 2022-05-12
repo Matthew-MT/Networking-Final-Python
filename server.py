@@ -50,7 +50,8 @@ class server:
     port = 7897
 
     self.freeids = [1]
-    self.names = {}
+    self.names = dict()
+    self.playerstuff = dict()
     
     self.connections = selectors.DefaultSelector()
     
@@ -88,14 +89,19 @@ class server:
             self.sendnames(pid, name)
             self.names[pid] = name
           else:
-            data = readyconnection.fileobj.recv(1)
-            if data:
+            try:
+              data = readyconnection.fileobj.recv(1)
+              if data:
                 self.sendkill(struct.unpack('>B', data))
-            else:
+              else:
+                raise ConnectionResetError
+            except ConnectionResetError:
+              self.senddisconnect(readyconnection.data[1])
               self.freeids.append(readyconnection.data[1])
               self.names.pop(readyconnection.data[1])
               self.connections.unregister(readyconnection.fileobj)
               readyconnection.fileobj.close()
+              
         else:
           print(readyconnection.fileobj.recvfrom(2))
     # array = [0, 1, 3]
@@ -123,6 +129,12 @@ class server:
       if connection.data[1] == pid:
         connection.fileobj.send(struct.pack('>B', constants.KILLSIGNAL))
     print(f'Killing player {pid}')
+
+  def senddisconnect(self, pid):
+    for connection in self.connections.get_map().values():
+      if connection.data[1]:
+        connection.fileobj.send(struct.pack('>BB', \
+            constants.PLAYERDISCONNECTED, pid))
         
 if __name__ == '__main__':
   myserver = server()

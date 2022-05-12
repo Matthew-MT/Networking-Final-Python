@@ -57,7 +57,7 @@ class networking:
 
   def playerdata(self, playerclass) -> None:
     self.checktcpstuff(playerclass)
-    bytestosend =     
+    bytestosend = struct.pack('>hhB' + 'h' * len(playerclass.bullets)
     # return dict(players = dict
     # return [[0, "name", [4, 6], [[4, 6], [4, 666], [5, 77]]]]
 

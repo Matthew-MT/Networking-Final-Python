@@ -26,7 +26,7 @@ class Player:
         self.otherPlayers = {}
         self.size = initSize
         self.network = initNetwork
-        self.otherPlayers = self.network.playerdata(self)
+        self.network.playerdata(self)
         self.tileMap = initTileMap
         self.respawn()
         pass
