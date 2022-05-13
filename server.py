@@ -56,8 +56,8 @@ class server:
     self.playerstuff = dict() # playerid:bytes
     
     self.connections = selectors.DefaultSelector()
-    self.connections.register(sys.stdin, selectors.EVENT_READ, \
-        (CONNECTION_STDIN, 0))
+    # self.connections.register(sys.stdin, selectors.EVENT_READ, \
+        # (CONNECTION_STDIN, 0))
     
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

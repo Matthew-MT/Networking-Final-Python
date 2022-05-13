@@ -66,31 +66,35 @@ class networking:
     # return [[0, "name", [4, 6], [[4, 6], [4, 666], [5, 77]]]]
     #
   def recieveplayerdata(self, playerclass) -> None:
-    playerdata =  self.sockudp.recvfrom(constants.MAXBUFFERSIZE)[0]
-    numplayers = struct.unpack_from('>B', playerdata)[0]
-    offset = 1
-    playerclass.otherBullets = []
-    for i in range(numplayers):
-      pid, numbullets = struct.unpack_from('>BB', playerdata, offset)
-      offset += 2
-      position = struct.unpack_from('>hh', playerdata, offset)
-      offset += 4
-      score = struct.unpack_from('>h', playerdata, offset)[0]
-      offset += 2
-      try:
-        playerclass.otherPlayers[pid]['pos'] = (float(position[0]), \
-            float(position[1]))
-        playerclass.otherPlayers[pid]['score'] = score
-      except KeyError:
-        playerclass.otherPlayers[pid] = dict(name = constants.BERGEN, \
-            position = (float(position[0]), float(position[1])), \
-            score = score)
-      bullets = [(0, 0)] * numbullets
-      for j in range(numbullets):
+    try:
+      playerdata =  self.sockudp.recvfrom(constants.MAXBUFFERSIZE)[0]
+    except socket.timeout:
+      return
+    else:
+      numplayers = struct.unpack_from('>B', playerdata)[0]
+      offset = 1
+      playerclass.otherBullets = []
+      for i in range(numplayers):
+        pid, numbullets = struct.unpack_from('>BB', playerdata, offset)
+        offset += 2
         position = struct.unpack_from('>hh', playerdata, offset)
         offset += 4
-        bullets[j] = (float(position[0]), float(position[1]))
-      playerclass.otherBullets += bullets
+        score = struct.unpack_from('>h', playerdata, offset)[0]
+        offset += 2
+        try:
+          playerclass.otherPlayers[pid]['pos'] = (float(position[0]), \
+              float(position[1]))
+          playerclass.otherPlayers[pid]['score'] = score
+        except KeyError:
+          playerclass.otherPlayers[pid] = dict(name = constants.BERGEN, \
+              position = (float(position[0]), float(position[1])), \
+              score = score)
+        bullets = [(0, 0)] * numbullets
+        for j in range(numbullets):
+          position = struct.unpack_from('>hh', playerdata, offset)
+          offset += 4
+          bullets[j] = (float(position[0]), float(position[1]))
+        playerclass.otherBullets += bullets
 
   def checktcpstuff(self, playerclass):
     result = self.tcplistener.select(0)
@@ -100,7 +104,7 @@ class networking:
         pid = struct.unpack('>B', result[0][0].fileobj.recv(1))[0]
         name = result[0][0].fileobj.recv(constants.MAXNAMELENGTH).decode().strip()
         if self.everyonesbergen:
-          name = constants.BERGEN
+          name = constants.BERGEN.decode().strip()
         playerclass.otherPlayers[pid] = dict(name = name)
       elif mode == constants.KILLSIGNAL:
         playerclass.respawn()
