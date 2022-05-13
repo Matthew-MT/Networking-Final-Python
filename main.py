@@ -147,6 +147,14 @@ def draw():
 
     for bullet in bullets:
         canvas.create_oval(bullet[0] - r, bullet[1] - r, bullet[0] + r, bullet[1] + r, fill="black", tags="redraw")
+
+    canvas.create_text(
+        300,
+        300 - player.size[1],
+        text=f"{player.name}\n{player.score}",
+        justify=CENTER,
+        tags="redraw"
+    )
     
     for otherPlayer in players:
         calcedPos = (
