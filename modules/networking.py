@@ -52,8 +52,8 @@ class networking:
 
   def playerdata(self, playerclass) -> None:
     self.checktcpstuff(playerclass)
-    bytestosend = struct.pack('>BBhh', self.pid, len(playerclass.bullets), \
-        int(playerclass.pos[0]), int(playerclass.pos[1]))
+    bytestosend = struct.pack('>BBhhh', self.pid, len(playerclass.bullets), \
+        int(playerclass.pos[0]), int(playerclass.pos[1]), playerclass.score)
     for bullet in playerclass.bullets:
       bytestosend += struct.pack('>hh', int(bullet['pos'][0]), \
           int(bullet['pos'][1]))
@@ -72,12 +72,17 @@ class networking:
       offset += 2
       position = struct.unpack_from('>hh', playerdata, offset)
       offset += 4
+      score = struct.unpack_from('>h', playerdata, offset)
+      offset += 2
       try:
         playerclass.otherPlayers[pid]['pos'] = (float(position[0]), \
             float(position[1]))
+        playerclass.otherPlayers[pid]['score'] = score
       except KeyError:
         playerclass.otherPlayers[pid] = dict(name = constants.BERGEN, \
-            position = (float(position[0]), float(position[1])))
+            position = (float(position[0]), float(position[1])), \
+            score = score)
+      playerclass.otherPlayers['score'] = 
       bullets = [(0, 0)] * numbullets
       for j in range(numbullets):
         position = struct.unpack_from('>hh', playerdata, offset)
