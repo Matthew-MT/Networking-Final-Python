@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 from time import time
 from tkinter import *
+import tkinter
 from tkinter.font import Font
 from modules.player import Player
 from modules.screen import TileMap
@@ -163,8 +164,9 @@ def draw():
         playerScore = 0#otherPlayer["score"]
         canvas.create_text(
             calcedPos[0] + (player.size[0] / 2.0),
-            calcedPos[1] - (player.size[1] / 4.0),
+            calcedPos[1] - (player.size[1] / 2.0),
             text=f"{playerName}\n{playerScore}",
+            justify=CENTER,
             tags="redraw"
         )
 
