@@ -37,7 +37,7 @@ class networking:
     self.sockettcp.send(playername)
 
     self.sockudp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    self.sockudp.settimeout(1)
+    self.sockudp.settimeout(0.04)
     self.udplistener = selectors.DefaultSelector()
     self.udplistener.register(self.sockettcp, selectors.EVENT_READ)
     # self.sockudp.sendto(b'ht', (host, port))
