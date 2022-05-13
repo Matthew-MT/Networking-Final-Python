@@ -95,7 +95,7 @@ class networking:
       mode = struct.unpack('>B', result[0][0].fileobj.recv(1))[0]
       if mode == constants.NAMEUPDATE:
         pid = struct.unpack('>B', result[0][0].fileobj.recv(1))[0]
-        name = result[0][0].fileobj.recv(constants.MAXNAMELENGTH)
+        name = result[0][0].fileobj.recv(constants.MAXNAMELENGTH).decode()
         if self.everyonesbergen:
           name = constants.BERGEN
         playerclass.otherPlayers[pid] = dict(name = name)

@@ -159,10 +159,12 @@ def draw():
             fill="black",
             tags="redraw"
         )
+        playerName = otherPlayer["name"]
+        playerScore = 0#otherPlayer["score"]
         canvas.create_text(
             calcedPos[0] + (player.size[0] / 2.0),
             calcedPos[1] - (player.size[1] / 4.0),
-            text=otherPlayer["name"],
+            text=f"{playerName}\n{playerScore}",
             tags="redraw"
         )
 

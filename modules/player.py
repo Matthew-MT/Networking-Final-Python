@@ -8,7 +8,7 @@ class Player:
     name: str = ""
     pos: tuple # (x, y)
     size: tuple # (w, h)
-    otherPlayers: dict # {"<id0>": {"name": str, "position": (float, float)}, ...}
+    otherPlayers: dict # {"<id0>": {"name": str, "score": int, "position": (float, float)}, ...}
     bullets: list = [] # [{"pos": (x, y), "vel": (xv, yv)}, ...]
     otherBullets: list # [(x, y), ...]
     network: networking
@@ -84,7 +84,8 @@ class Player:
                         pos[0] - origin[0],
                         pos[1] - origin[1]
                     ),
-                    "name": player["name"]
+                    "name": player["name"],
+                    #"score": player["score"]
                 })
         return players
 
