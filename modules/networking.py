@@ -5,12 +5,8 @@ import numpy
 import struct
 import random
 import selectors
-import time
 
-if __name__ == '__main__':
-  import constants
-else:
-  from modules import constants
+from modules import constants
 
 defaulthost = "127.0.0.1"
 
@@ -112,13 +108,3 @@ class networking:
   #   mybuffer = self.sock.recv(1024)
   #   data = numpy.frombuffer(mybuffer, dtype=numpy.uint8)
   #   return data
-
-if __name__ == '__main__':
-  mynetworking = networking(input("What's your name?: "))
-  print(mynetworking.receivemap())
-  from player import Player
-  player = Player(0, networking, 0)
-  print(player.otherPlayers)
-  while True:
-    mynetworking.checktcpstuff(player)
-    time.sleep(1)

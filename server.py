@@ -151,4 +151,3 @@ class server:
 if __name__ == '__main__':
   myserver = server()
   myserver.main()
-  myserver.sendmap(myserver.aclientsockettcp)
