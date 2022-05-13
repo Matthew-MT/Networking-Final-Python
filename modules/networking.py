@@ -94,7 +94,7 @@ class networking:
     if len(result) > 0:
       mode = struct.unpack('>B', result[0][0].fileobj.recv(1))[0]
       if mode == constants.NAMEUPDATE:
-        pid = struct.unpack(result[0][0].fileobj.recv(1))[0]
+        pid = struct.unpack('>B', result[0][0].fileobj.recv(1))[0]
         name = result[0][0].fileobj.recv(constants.MAXNAMELENGTH)
         if self.everyonesbergen:
           name = constants.BERGEN
