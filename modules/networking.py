@@ -72,7 +72,7 @@ class networking:
       offset += 2
       position = struct.unpack_from('>hh', playerdata, offset)
       offset += 4
-      score = struct.unpack_from('>h', playerdata, offset)
+      score = struct.unpack_from('>h', playerdata, offset)[0]
       offset += 2
       try:
         playerclass.otherPlayers[pid]['pos'] = (float(position[0]), \
