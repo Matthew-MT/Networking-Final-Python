@@ -159,7 +159,7 @@ def draw():
             fill="black",
             tags="redraw"
         )
-        nameDisplay = canvas.create_text(
+        canvas.create_text(
             calcedPos[0] + (player.size[0] / 2.0),
             calcedPos[1] - (player.size[1] / 4.0),
             text=otherPlayer["name"],
@@ -178,7 +178,7 @@ def update():
     global clickQueued
     global clickCoords
 
-    player.gameTick(time(), up, left, right, click or clickQueued, clickCoords)
+    player.gameTick(time(), up, left, right, click or clickQueued, clickCoords, 600, 600)
     clickQueued = False
     draw()
     canvas.after(20, update)

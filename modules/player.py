@@ -52,7 +52,9 @@ class Player:
         origin = (center[0] - (scrW / 2.0), center[1] - (scrH / 2.0))
         alter = (origin[0] + scrW, origin[1] + scrH)
         bullets: list = []
+        print(self.bullets)
         for bulletData in self.bullets:
+            print(bullets)
             bullet = bulletData["pos"]
             if origin[0] < bullet[0] and bullet[0] < alter[0]\
             and origin[1] < bullet[1] and bullet[1] < alter[1]:
@@ -88,11 +90,12 @@ class Player:
                 })
         return players
 
-    def gameTick(self, curTime, up, left, right, click, target):
+    def gameTick(self, curTime, up, left, right, click, target, scrW, scrH):
         self.network.playerdata(self)
         self.updateVelAndAcc(curTime, up, left, right)
+        self.updateBullets(curTime)
         if self.remCool <= 0 and click:
-            self.shoot(target)
+            self.shoot((target[0] - (scrW / 2.0), target[1] - (scrH / 2.0)))
             self.remCool = self.cooldown
         elif self.remCool > 0:
             self.remCool = self.remCool - (curTime - self.lastTime) * 1000
@@ -190,15 +193,16 @@ class Player:
     def shoot(self, target):
         if len(self.bullets) >= 256:
             return
-        norm = sqrt((target[0] * target[0]) + (target[1] + target[1]))
-        normVect = ((target[0] / norm) * 4096, (target[1] / norm) * 4096)
+        norm = sqrt((target[0] * target[0]) + (target[1] + target[1])).real
+        normVect = ((target[0] / norm) * 256, (target[1] / norm) * 256)
         self.bullets.append({
             "pos": (self.pos[0] + (self.size[0] / 2.0), self.pos[1] + (self.size[1] / 2.0)),
             "vel": normVect
         })
         return
     
-    def updateBullets(self):
+    def updateBullets(self, nextTime):
+        scalar = nextTime - self.lastTime
         r: float = (self.size[0] * self.size[0]) + (self.size[1] * self.size[1])
         sx, sy = self.size
         ox = sx / 2.0
@@ -211,6 +215,8 @@ class Player:
             collided = False
             bx, by = bullet["pos"]
             vx, vy = bullet["vel"]
+            vx = vx * scalar
+            vy = vy * scalar
             traveled = (vx * vx) + (vy * vy)
             for id, player in self.otherPlayers:
                 px, py = player["pos"]
@@ -220,13 +226,8 @@ class Player:
                 ay = py + sy
                 dist = ((cx - bx) * (cx - bx)) + ((cy - by) * (cy - by))
                 if dist <= traveled + r:
-                    if vx == 0:
-                        if abs(bx - cx) <= ox:
-                            self.network.sendkillsignal(id)
-                            self.score += 1
-                            collided = True
-                    elif vy == 0:
-                        if abs(by - cy) <= oy:
+                    if vx == 0 or vy == 0:
+                        if abs(bx - cx) <= ox and abs(by - cy) < oy:
                             self.network.sendkillsignal(id)
                             self.score += 1
                             collided = True
@@ -240,10 +241,13 @@ class Player:
                             self.score += 1
                             collided = True
             
+            if self.tileMap.checkCollision((bx, by), (0.0, 0.0)):
+                collided = True
+
             if collided:
                 toDel.append(i)
             else:
-                self.bullets[i] = (bx + vx, by + vy)
+                self.bullets[i]["pos"] = (bx + vx, by + vy)
         
         if len(toDel) > 0:
             c = 0
