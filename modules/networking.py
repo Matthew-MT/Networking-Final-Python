@@ -80,10 +80,8 @@ class networking:
         playerclass.otherPlayers[pid]['pos'] = (float(position[0]), \
             float(position[1]))
       except KeyError:
-        playerclass.otherPlayers[pid] = {
-          "name": constants.BERGEN, \
-          "pos": (float(position[0]), float(position[1]))
-        }
+        playerclass.otherPlayers[pid] = dict(name = constants.BERGEN, \
+            position = (float(position[0]), float(position[1])))
       bullets = [(0, 0)] * numbullets
       for j in range(numbullets):
         position = struct.unpack_from('>hh', playerdata, offset)
@@ -96,7 +94,7 @@ class networking:
     if len(result) > 0:
       mode = struct.unpack('>B', result[0][0].fileobj.recv(1))[0]
       if mode == constants.NAMEUPDATE:
-        pid = result[0][0].fileobj.recv(1)
+        pid = struct.unpack(result[0][0].fileobj.recv(1))[0]
         name = result[0][0].fileobj.recv(constants.MAXNAMELENGTH)
         if self.everyonesbergen:
           name = constants.BERGEN
