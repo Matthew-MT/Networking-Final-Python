@@ -5,10 +5,11 @@ from tkinter.font import Font
 from modules.player import Player
 from modules.screen import TileMap
 from modules.networking import networking
+from modules.constants import *
 
 root = Tk()
 root.title("Gaem") #interesting title
-root.geometry("640x640")
+root.geometry(f"{SCREENWIDTH}x{SCREENHEIGHT}")
 
 font = Font(family="Sans Serif", size=28)
 
@@ -24,7 +25,7 @@ frame.pack(padx=20, pady=20)
 nameLabel = Label(frame, text="Input a username:")
 nameLabel.pack()
 nameInput = Entry(frame)
-nameInput.grid_location(320 - nameInput.winfo_height(), 320 - nameInput.winfo_width())
+nameInput.grid_location((SCREENHEIGHT >> 2) - nameInput.winfo_height(), (SCREENWIDTH >> 2) - nameInput.winfo_width())
 nameInput.pack()
 
 hostLabel = Label(frame, text="Input the host:")
@@ -32,8 +33,8 @@ hostLabel.pack()
 hostInput = Entry(frame)
 hostInput.pack()
 
-canvas = Canvas(root, width=600, height=600, bg="white")
-canvas.create_rectangle(0, 0, 600, 600, fill="black")
+canvas = Canvas(root, width=CANVASWIDTH, height=CANVASHEIGHT, bg="white")
+canvas.create_rectangle(0, 0, CANVASWIDTH, CANVASHEIGHT, fill="black")
 
 up: bool = False
 left: bool = False
@@ -120,7 +121,7 @@ def submitted():
     network = networking(host, username)
     screen = TileMap(network, 80)
     player = Player((40, 40), network, screen)
-    view = player.getView(600, 600)
+    view = player.getView(CANVASWIDTH, CANVASHEIGHT)
     background = screen.getDrawScreen(view)
 
     canvas.pack(padx=20, pady=20)
@@ -128,7 +129,14 @@ def submitted():
     for column in background:
         for tile in column:
             canvas.create_rectangle(tile[0], tile[1], tile[2], tile[3], fill=tile[4], tags="redraw")
-    canvas.create_rectangle(280, 280, 320, 320, fill="black", tags="redraw")
+    canvas.create_rectangle(
+        (CANVASWIDTH >> 1) - (player.size[0] >> 1),
+        (CANVASHEIGHT >> 1) - (player.size[1] >> 1),
+        (CANVASWIDTH >> 1) + (player.size[0] >> 1),
+        (CANVASHEIGHT >> 1) + (player.size[1] >> 1),
+        fill="black",
+        tags="redraw"
+    )
 
     root.bind("<KeyPress>", keyPress)
     root.bind("<KeyRelease>", keyRelease)
@@ -150,9 +158,9 @@ def draw():
     global view
     global background
 
-    nextView = player.getView(600, 600)
-    bullets = player.getDrawnBullets(600, 600)
-    players = player.getDrawnOtherPlayers(600, 600)
+    nextView = player.getView(CANVASWIDTH, CANVASHEIGHT)
+    bullets = player.getDrawnBullets(CANVASWIDTH, CANVASHEIGHT)
+    players = player.getDrawnOtherPlayers(CANVASWIDTH, CANVASHEIGHT)
     r = 4
 
     if abs(nextView[0] - view[0]) > 0.2\
@@ -163,7 +171,14 @@ def draw():
         for column in background:
             for tile in column:
                 canvas.create_rectangle(tile[0], tile[1], tile[2], tile[3], fill=tile[4], tags="tiles")
-        canvas.create_rectangle(280, 280, 320, 320, fill="black", tags="tiles")
+        canvas.create_rectangle(
+            (CANVASWIDTH >> 1) - (player.size[0] >> 1),
+            (CANVASHEIGHT >> 1) - (player.size[1] >> 1),
+            (CANVASWIDTH >> 1) + (player.size[0] >> 1),
+            (CANVASHEIGHT >> 1) + (player.size[1] >> 1),
+            fill="black",
+            tags="tiles"
+        )
     
     canvas.delete("redraw")
 
@@ -171,8 +186,8 @@ def draw():
         canvas.create_oval(bullet[0] - r, bullet[1] - r, bullet[0] + r, bullet[1] + r, fill="black", tags="redraw")
 
     canvas.create_text(
-        300,
-        300 - player.size[1],
+        CANVASWIDTH >> 1,
+        (CANVASHEIGHT >> 1) - player.size[1],
         text=f"{player.name}\n{player.score}",
         justify=CENTER,
         tags="redraw"
@@ -215,7 +230,7 @@ def update():
     global clickQueued
     global clickCoords
 
-    player.gameTick(time(), up, left, right, click or clickQueued, clickCoords, 600, 600)
+    player.gameTick(time(), up, left, right, click or clickQueued, clickCoords, CANVASWIDTH, CANVASHEIGHT)
     clickQueued = False
     draw()
     canvas.after(20, update)
