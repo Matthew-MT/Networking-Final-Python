@@ -126,6 +126,7 @@ def draw():
 
     nextView = player.getView(600, 600)
     bullets = player.getDrawnBullets(600, 600)
+    players = player.getDrawnOtherPlayers(600, 600)
     r = 4
 
     if abs(nextView[0] - view[0]) > 0.2\
@@ -140,6 +141,27 @@ def draw():
     
     for bullet in bullets:
         canvas.create_oval(bullet[0] - r, bullet[1] - r, bullet[0] + r, bullet[1] + r, fill="black", tags="redraw")
+    
+    for otherPlayer in players:
+        calcedPos = (
+            otherPlayer[0],
+            otherPlayer[1],
+            otherPlayer[0] + player.size[0],
+            otherPlayer[1] + player.size[1]
+        )
+        canvas.create_rectangle(
+            calcedPos[0],
+            calcedPos[1],
+            calcedPos[2],
+            calcedPos[3],
+            fill="black",
+            tags="redraw"
+        )
+        nameDisplay = canvas.create_text(
+            calcedPos[0], calcedPos[1], text=otherPlayer["name"], tags="redraw"
+        )
+        width = canvas.itemcget(nameDisplay, option="width")
+        print(width)
 
     return
 

@@ -62,6 +62,21 @@ class Player:
             and origin[1] < bullet[1] and bullet[1] < alter[1]:
                 bullets.append((bullet[0] - origin[0], bullet[1] - origin[1]))
         return bullets
+    
+    def getDrawnOtherPlayers(self, scrW, scrH):
+        center = (
+            self.pos[0] + (self.size[0] / 2.0),
+            self.pos[1] + (self.size[1] / 2.0)
+        )
+        origin = ((center[0] - (scrW / 2.0)) - self.size[0], (center[1] - (scrH / 2.0)) - self.size[1])
+        alter = (origin[0] + scrW + self.size[0], origin[1] + scrH + self.size[1])
+        players: list = []
+        for player in self.otherPlayers:
+            pos = player["pos"]
+            if origin[0] <= pos[0] and pos[0] <= alter[0]\
+            and origin[1] <= pos[1] and pos[1] <= alter[1]:
+                players.append(player)
+        return players
 
     def gameTick(self, curTime, up, left, right, click, target):
         self.network.playerdata(self)
@@ -168,7 +183,7 @@ class Player:
         norm = sqrt((target[0] * target[0]) + (target[1] + target[1]))
         normVect = ((target[0] / norm) * 4096, (target[1] / norm) * 4096)
         self.bullets.append({
-            "pos": self.pos,
+            "pos": (self.pos[0] + (self.size[0] / 2.0), self.pos[1] + (self.size[1] / 2.0)),
             "vel": normVect
         })
         return
