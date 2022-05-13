@@ -106,7 +106,7 @@ class networking:
         del(playerclass.otherPlayers[pid])
 
   def sendkillsignal(self, playerid):
-    self.sockettcp = socket.send(struct.pack(">B", playerid))
+    self.sockettcp.send(struct.pack(">B", playerid))
     
   # def recievesomething(self):
   #   mybuffer = self.sock.recv(1024)

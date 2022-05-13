@@ -91,7 +91,7 @@ class server:
             try:
               data = readyconnection.fileobj.recv(1)
               if data:
-                self.sendkill(struct.unpack('>nB', data))
+                self.sendkill(struct.unpack('>B', data))
               else:
                 raise ConnectionResetError
             except ConnectionResetError:

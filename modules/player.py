@@ -52,9 +52,7 @@ class Player:
         origin = (center[0] - (scrW / 2.0), center[1] - (scrH / 2.0))
         alter = (origin[0] + scrW, origin[1] + scrH)
         bullets: list = []
-        print(self.bullets)
         for bulletData in self.bullets:
-            print(bullets)
             bullet = bulletData["pos"]
             if origin[0] < bullet[0] and bullet[0] < alter[0]\
             and origin[1] < bullet[1] and bullet[1] < alter[1]:
@@ -218,7 +216,8 @@ class Player:
             vx = vx * scalar
             vy = vy * scalar
             traveled = (vx * vx) + (vy * vy)
-            for id, player in self.otherPlayers:
+            for id in self.otherPlayers.keys():
+                player = self.otherPlayers[id]
                 px, py = player["pos"]
                 cx = px + ox
                 cy = py + oy
