@@ -68,8 +68,8 @@ class Player:
             self.pos[0] + (self.size[0] / 2.0),
             self.pos[1] + (self.size[1] / 2.0)
         )
-        origin = ((center[0] - (scrW / 2.0)) - self.size[0], (center[1] - (scrH / 2.0)) - self.size[1])
-        alter = (origin[0] + scrW + self.size[0], origin[1] + scrH + self.size[1])
+        origin = (center[0] - (scrW / 2.0), center[1] - (scrH / 2.0))
+        alter = (origin[0] + scrW, origin[1] + scrH)
         players: list = []
         for player in self.otherPlayers.values():
             pos: tuple
@@ -77,9 +77,15 @@ class Player:
                 pos = player["pos"]
             except:
                 pos = (0.0, 0.0)
-            if origin[0] <= pos[0] and pos[0] <= alter[0]\
-            and origin[1] <= pos[1] and pos[1] <= alter[1]:
-                players.append(player)
+            if origin[0] - self.size[0] <= pos[0] and pos[0] <= alter[0]\
+            and origin[1] - self.size[1] <= pos[1] and pos[1] <= alter[1]:
+                players.append({
+                    "pos": (
+                        pos[0] - origin[0],
+                        pos[1] - origin[1]
+                    ),
+                    "name": player["name"]
+                })
         return players
 
     def gameTick(self, curTime, up, left, right, click, target):

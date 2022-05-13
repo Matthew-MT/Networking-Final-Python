@@ -131,14 +131,16 @@ def draw():
 
     if abs(nextView[0] - view[0]) > 0.2\
     or abs(nextView[1] - view[1]) > 0.2:
-        canvas.delete("redraw")
+        canvas.delete("tiles")
         view = nextView
         background = screen.getDrawScreen(view)
         for column in background:
             for tile in column:
-                canvas.create_rectangle(tile[0], tile[1], tile[2], tile[3], fill=tile[4], tags="redraw")
-        canvas.create_rectangle(280, 280, 320, 320, fill="black", tags="redraw")
+                canvas.create_rectangle(tile[0], tile[1], tile[2], tile[3], fill=tile[4], tags="tiles")
+        canvas.create_rectangle(280, 280, 320, 320, fill="black", tags="tiles")
     
+    canvas.delete("redraw")
+
     for bullet in bullets:
         canvas.create_oval(bullet[0] - r, bullet[1] - r, bullet[0] + r, bullet[1] + r, fill="black", tags="redraw")
     
@@ -158,10 +160,11 @@ def draw():
             tags="redraw"
         )
         nameDisplay = canvas.create_text(
-            calcedPos[0], calcedPos[1], text=otherPlayer["name"], tags="redraw"
+            calcedPos[0] + (player.size[0] / 2.0),
+            calcedPos[1] - (player.size[1] / 4.0),
+            text=otherPlayer["name"],
+            tags="redraw"
         )
-        width = canvas.itemcget(nameDisplay, option="width")
-        print(width)
 
     return
 
