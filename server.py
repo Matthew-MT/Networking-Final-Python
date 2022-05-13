@@ -5,11 +5,13 @@ import socket
 import struct
 import selectors
 import random
+import sys
 
 from modules import constants
 
 CONNECTION_TCP = 0b01
 CONNECTION_SERVERSOCKET = 0b10
+CONNECTION_STDIN = 0b100
 
 class server:
   def __init__(self):
@@ -54,6 +56,8 @@ class server:
     self.playerstuff = dict() # playerid:bytes
     
     self.connections = selectors.DefaultSelector()
+    self.connections.register(sys.stdin, selectors.EVENT_READ, \
+        (CONNECTION_STDIN, 0))
     
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -72,7 +76,10 @@ class server:
     while True:
       readyconnections = self.connections.select()
       for readyconnection, __ in readyconnections:
-        if readyconnection.data[0] & CONNECTION_TCP:
+        if readyconnection.data[0] & CONNECTION_STDIN:
+          pid = int(input())
+          self.sendkill(pid)
+        elif readyconnection.data[0] & CONNECTION_TCP:
           if readyconnection.data[0] & CONNECTION_SERVERSOCKET:
             clientsocket = readyconnection.fileobj.accept()[0]
             pid = self.freeids.pop()
@@ -106,7 +113,6 @@ class server:
               readyconnection.fileobj.close()
               
         else:
-          
           playerdata, returnaddress = readyconnection.fileobj.\
               recvfrom(constants.MAXBUFFERSIZE)
           pid = struct.unpack_from('>B', playerdata)[0]

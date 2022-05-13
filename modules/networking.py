@@ -14,6 +14,7 @@ class networking:
   pid: int
   everyonesbergen: bool
   tcplistener: selectors.DefaultSelector
+  udplistener: selectors.DefaultSelector
   
   def __init__(self, host = "localhost", playername = 'Jeremy Bergen'):
     self.everyonesbergen = random.random() < constants.UNIVERSAL_PROBABILITY
@@ -36,6 +37,9 @@ class networking:
     self.sockettcp.send(playername)
 
     self.sockudp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    self.sockudp.settimeout(1)
+    self.udplistener = selectors.DefaultSelector()
+    self.udplistener.register(self.sockettcp, selectors.EVENT_READ)
     # self.sockudp.sendto(b'ht', (host, port))
 
   # def senddata(self, data) -> None:
