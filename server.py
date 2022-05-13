@@ -70,7 +70,6 @@ class server:
 
   def main(self):
     while True:
-      print('selecting...')
       readyconnections = self.connections.select()
       for readyconnection, __ in readyconnections:
         if readyconnection.data[0] & CONNECTION_TCP:
@@ -117,7 +116,6 @@ class server:
           for key, value in self.playerstuff.items():
             if key != pid:
               bytestosend += value
-          print(bytestosend)
           readyconnection.fileobj.sendto(bytestosend, returnaddress)
     # array = [0, 1, 3]
     # numarray = numpy.array(array)
@@ -135,7 +133,6 @@ class server:
           connection.fileobj.send(struct.pack('>BB', constants.NAMEUPDATE, \
               pid) + name)
         else:
-          print(self.names)
           for pair in self.names.items():
             connection.fileobj.send(struct.pack('>BB', constants.NAMEUPDATE, \
                 pair[0]) + pair[1])
@@ -143,7 +140,6 @@ class server:
     for connection in self.connections.get_map().values():
       if connection.data[1] == pid:
         connection.fileobj.send(struct.pack('>B', constants.KILLSIGNAL))
-    print(f'Killing player {pid}')
 
   def senddisconnect(self, pid):
     for connection in self.connections.get_map().values():

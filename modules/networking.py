@@ -32,7 +32,6 @@ class networking:
     self.pid = struct.unpack('>B', self.sockettcp.recv(1))[0]
     self.tcplistener = selectors.DefaultSelector()
     self.tcplistener.register(self.sockettcp, selectors.EVENT_READ)
-    print(self.pid)
 
     playername = playername.encode()
     if len(playername) > constants.MAXNAMELENGTH or len(playername) == 0:
@@ -56,7 +55,6 @@ class networking:
     return gamemap.tolist()
 
   def playerdata(self, playerclass) -> None:
-    print(playerclass.pos)
     self.checktcpstuff(playerclass)
     bytestosend = struct.pack('>BBhh', self.pid, len(playerclass.bullets), \
         int(playerclass.pos[0]), int(playerclass.pos[1]))
@@ -76,13 +74,17 @@ class networking:
     for i in range(numplayers):
       pid, numbullets = struct.unpack_from('>BB', playerdata, offset)
       offset += 2
-      position = struct.unpack('>hh', playerdata, offset)
+      position = struct.unpack_from('>hh', playerdata, offset)
       offset += 4
-      playerclass.otherPlayers[pid]['position'] = (float(position[0]), \
-          float(position[1]))
+      try:
+        playerclass.otherPlayers[pid]['position'] = (float(position[0]), \
+            float(position[1]))
+      except KeyError:
+        playerclass.otherPlayers[pid] = dict(name = constants.BERGEN, \
+            position = (float(position[0]), float(position[1])))
       bullets = [(0, 0)] * numbullets
       for j in range(numbullets):
-        position = struct.unpack('>hh', playerdata, offset)
+        position = struct.unpack_from('>hh', playerdata, offset)
         offset += 4
         bullets[j] = (float(position[0]), float(position[1]))
       playerclass.otherBullets += bullets
@@ -96,16 +98,12 @@ class networking:
         name = result[0][0].fileobj.recv(constants.MAXNAMELENGTH)
         if self.everyonesbergen:
           name = constants.BERGEN
-        print(playerclass.otherPlayers)
         playerclass.otherPlayers[pid] = dict(name = name)
-        print(playerclass.otherPlayers)
-#        print(result[0][0].fileobj.recv(constants.MAXNAMELENGTH + 1))
       elif mode == constants.KILLSIGNAL:
         playerclass.respawn()
       elif mode == constants.PLAYERDISCONNECTED:
         pid = result[0][0].fileobj.recv(1)
         del(playerclass.otherPlayers[pid])
-        print(playerclass.otherPlayers)
 
   def sendkillsignal(self, playerid):
     self.sockettcp = socket.send(struct.pack(">B", playerid))
