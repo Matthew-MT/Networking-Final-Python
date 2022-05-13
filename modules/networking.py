@@ -15,10 +15,9 @@ class networking:
   everyonesbergen: bool
   tcplistener: selectors.DefaultSelector
   
-  def __init__(self, playername = 'Jeremy Bergen'):
+  def __init__(self, host = "localhost", playername = 'Jeremy Bergen'):
     self.everyonesbergen = random.random() < constants.UNIVERSAL_PROBABILITY
-    self.host: str = input("Enter the destination ip address " \
-        + f"(or blank for {defaulthost}): ")
+    self.host: str = host
     if self.host == "":
       self.host = defaulthost
     self.port: int = 7897

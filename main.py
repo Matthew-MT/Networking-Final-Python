@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 from time import time
 from tkinter import *
-import tkinter
 from tkinter.font import Font
 from modules.player import Player
 from modules.screen import TileMap
@@ -19,12 +18,19 @@ player: Player
 view: tuple
 background: list
 
-nameLabel = Text()
+frame = Frame(root)
+frame.pack(padx=20, pady=20)
 
-
-nameInput = Entry()
+nameLabel = Label(frame, text="Input a username:")
+nameLabel.pack()
+nameInput = Entry(frame)
 nameInput.grid_location(320 - nameInput.winfo_height(), 320 - nameInput.winfo_width())
-nameInput.pack(padx=20)
+nameInput.pack()
+
+hostLabel = Label(frame, text="Input the host:")
+hostLabel.pack()
+hostInput = Entry(frame)
+hostInput.pack()
 
 canvas = Canvas(root, width=600, height=600, bg="white")
 canvas.create_rectangle(0, 0, 600, 600, fill="black")
@@ -41,11 +47,11 @@ def keyPress(event):
     global left
     global right
     keyName = event.keysym
-    if keyName == "Up":
+    if keyName == "Up" or keyName == "w" or keyName == "W":
         up = True
-    elif keyName == "Left":
+    elif keyName == "Left" or keyName == "a" or keyName == "A":
         left = True
-    elif keyName == "Right":
+    elif keyName == "Right" or keyName == "d" or keyName == "D":
         right = True
     return
 
@@ -55,11 +61,11 @@ def keyRelease(event):
     global right
     global click
     keyName = event.keysym
-    if keyName == "Up" or keyName == "w":
+    if keyName == "Up" or keyName == "w" or keyName == "W":
         up = False
-    elif keyName == "Left" or keyName == "a":
+    elif keyName == "Left" or keyName == "a" or keyName == "A":
         left = False
-    elif keyName == "Right" or keyName == "d":
+    elif keyName == "Right" or keyName == "d" or keyName == "D":
         right = False
     return
 
@@ -79,8 +85,18 @@ def clickRelease(event):
         click = False
     return
 
+def mouseMoved(event):
+    global click
+    global clickCoords
+    if click:
+        clickCoords = (event.x, event.y)
+
 def submitted():
+    global frame
+    global nameLabel
     global nameInput
+    global hostLabel
+    global hostInput
     global submit
 
     global network
@@ -91,12 +107,17 @@ def submitted():
     global view
     global background
 
-    val: str = nameInput.get()
+    username: str = nameInput.get()
+    host: str = hostInput.get()
 
+    frame.pack_forget()
+    nameLabel.pack_forget()
     nameInput.pack_forget()
+    hostLabel.pack_forget()
+    hostInput.pack_forget()
     submit.pack_forget()
 
-    network = networking(val)
+    network = networking(host, username)
     screen = TileMap(network, 80)
     player = Player((40, 40), network, screen)
     view = player.getView(600, 600)
@@ -113,12 +134,13 @@ def submitted():
     root.bind("<KeyRelease>", keyRelease)
     root.bind("<Button>", clickPress)
     root.bind("<ButtonRelease>", clickRelease)
+    root.bind("<Motion>", mouseMoved)
     
     update()
 
     return
 
-submit = Button(root, text="Submit", command=submitted)
+submit = Button(frame, text="Submit", command=submitted)
 submit.pack()
 
 def draw():
