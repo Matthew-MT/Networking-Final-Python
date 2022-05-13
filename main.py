@@ -19,9 +19,12 @@ player: Player
 view: tuple
 background: list
 
+nameLabel = Text()
+
+
 nameInput = Entry()
 nameInput.grid_location(320 - nameInput.winfo_height(), 320 - nameInput.winfo_width())
-nameInput.pack()
+nameInput.pack(padx=20)
 
 canvas = Canvas(root, width=600, height=600, bg="white")
 canvas.create_rectangle(0, 0, 600, 600, fill="black")
@@ -52,11 +55,11 @@ def keyRelease(event):
     global right
     global click
     keyName = event.keysym
-    if keyName == "Up":
+    if keyName == "Up" or keyName == "w":
         up = False
-    elif keyName == "Left":
+    elif keyName == "Left" or keyName == "a":
         left = False
-    elif keyName == "Right":
+    elif keyName == "Right" or keyName == "d":
         right = False
     return
 
@@ -161,7 +164,7 @@ def draw():
             tags="redraw"
         )
         playerName = otherPlayer["name"]
-        playerScore = 0#otherPlayer["score"]
+        playerScore = otherPlayer["score"]
         canvas.create_text(
             calcedPos[0] + (player.size[0] / 2.0),
             calcedPos[1] - (player.size[1] / 2.0),

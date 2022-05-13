@@ -85,7 +85,7 @@ class Player:
                         pos[1] - origin[1]
                     ),
                     "name": player["name"],
-                    #"score": player["score"]
+                    "score": player["score"]
                 })
         return players
 
