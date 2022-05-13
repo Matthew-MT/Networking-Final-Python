@@ -69,16 +69,23 @@ class networking:
     # return [[0, "name", [4, 6], [[4, 6], [4, 666], [5, 77]]]]
     #
   def recieveplayerdata(self, playerclass) -> None:
-    numplayers = struct.unpack('>B', self.sockudp.recv(1)[0])[0]
+    playerdata =  self.sockudp.recvfrom(constants.MAXBUFFERSIZE)[0]
+    numplayers = struct.unpack_from('>B', playerdata)[0]
+    offset = 1
+    playerclass.otherBullets = []
     for i in range(numplayers):
-      pid, numbullets = struct.unpack('>BB', self.sockudp.recv(2)[0])
-      position = struct.unpack('>hh', self.sockudp.recv(2)[0])
+      pid, numbullets = struct.unpack_from('>BB', playerdata, offset)
+      offset += 2
+      position = struct.unpack('>hh', playerdata, offset)
+      offset += 4
       playerclass.otherPlayers[pid]['position'] = (float(position[0]), \
           float(position[1]))
-      playerclass.otherBullets = [(0, 0)] * numbullets
+      bullets = [(0, 0)] * numbullets
       for j in range(numbullets):
-        position = struct.unpack('>hh', self.sockudp.recv(2)[0])
-        playerclass.otherBullets[j] = (float(position[0]), float(position[1]))
+        position = struct.unpack('>hh', playerdata, offset)
+        offset += 4
+        bullets[j] = (float(position[0]), float(position[1]))
+      playerclass.otherBullets += bullets
 
   def checktcpstuff(self, playerclass):
     result = self.tcplistener.select(0)

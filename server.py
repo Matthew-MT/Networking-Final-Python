@@ -107,17 +107,17 @@ class server:
               readyconnection.fileobj.close()
               
         else:
-          pidbyte, returnadress = readyconnection.fileobj.recvfrom(1)
-          pid = struct.unpack('>B', pidbyte)[0]
-          numbulletsbyte = readyconnection.fileobj.recvfrom(1)[0]
-          numbullets = struct.unpack('>B', numbulletsbyte)
-          playerdata = readyconnection.fileobj.recvfrom(4 + 4 * numbullets)[0]
-          self.playerstuff[pid] = pidbyte + numbulletsbyte + playerdata
+          
+          playerdata, returnaddress = readyconnection.fileobj.\
+              recvfrom(constants.MAXBUFFERSIZE)
+          pid = struct.unpack_from('>B', playerdata)[0]
+          self.playerstuff[pid] = playerdata
           numplayers = len(self.playerstuff) - 1
           bytestosend = struct.pack('>B', numplayers)
           for key, value in self.playerstuff.items():
             if key != pid:
               bytestosend += value
+          print(bytestosend)
           readyconnection.fileobj.sendto(bytestosend, returnaddress)
     # array = [0, 1, 3]
     # numarray = numpy.array(array)
