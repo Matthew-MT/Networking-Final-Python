@@ -71,8 +71,12 @@ class Player:
         origin = ((center[0] - (scrW / 2.0)) - self.size[0], (center[1] - (scrH / 2.0)) - self.size[1])
         alter = (origin[0] + scrW + self.size[0], origin[1] + scrH + self.size[1])
         players: list = []
-        for id, player in self.otherPlayers:
-            pos = player["pos"]
+        for player in self.otherPlayers.values():
+            pos: tuple
+            try:
+                pos = player["pos"]
+            except:
+                pos = (0.0, 0.0)
             if origin[0] <= pos[0] and pos[0] <= alter[0]\
             and origin[1] <= pos[1] and pos[1] <= alter[1]:
                 players.append(player)
@@ -259,7 +263,6 @@ class Player:
         openTiles = self.tileMap.openTiles
         tileSize = self.tileMap.tileSize
         tile = openTiles[randint(0, len(openTiles) - 1)]
-        tile = (0, 0)
         self.pos = (
             (tile[0] * tileSize) + ((tileSize - self.size[0]) / 2),
             (tile[1] * tileSize) + ((tileSize - self.size[1]) / 2)
