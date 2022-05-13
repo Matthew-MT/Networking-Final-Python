@@ -77,7 +77,7 @@ class networking:
       position = struct.unpack_from('>hh', playerdata, offset)
       offset += 4
       try:
-        playerclass.otherPlayers[pid]['position'] = (float(position[0]), \
+        playerclass.otherPlayers[pid]['pos'] = (float(position[0]), \
             float(position[1]))
       except KeyError:
         playerclass.otherPlayers[pid] = dict(name = constants.BERGEN, \
