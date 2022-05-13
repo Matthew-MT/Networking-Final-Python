@@ -144,10 +144,10 @@ def draw():
     
     for otherPlayer in players:
         calcedPos = (
-            otherPlayer[0],
-            otherPlayer[1],
-            otherPlayer[0] + player.size[0],
-            otherPlayer[1] + player.size[1]
+            otherPlayer["pos"][0],
+            otherPlayer["pos"][1],
+            otherPlayer["pos"][0] + player.size[0],
+            otherPlayer["pos"][1] + player.size[1]
         )
         canvas.create_rectangle(
             calcedPos[0],
