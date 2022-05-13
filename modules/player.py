@@ -173,17 +173,6 @@ class Player:
 
         newX = [self.pos[0] + xv, self.pos[1]]
         newY = [self.pos[0], self.pos[1] + yv]
-        
-        while self.tileMap.checkCollision(newX, self.size)\
-        and abs(xv) > 0.01:
-            xv /= 2.0
-            self.xv /= 2.0
-            newX[0] -= xv
-
-        if abs(xv) <= 0.01:
-            self.xv = 0.0
-            newX[0] = self.pos[0]
-            newY[0] = newX[0]
 
         while self.tileMap.checkCollision(newY, self.size)\
         and abs(yv) > 0.01:
@@ -194,32 +183,18 @@ class Player:
         if abs(yv) <= 0.01:
             self.yv = 0.0
             newY[1] = self.pos[1]
+        else:
+            newX[1] = newY[1]
 
-        print("Positions:")
-        print(self.pos)
-        print((newX[0], newY[1]))
-        print((
-            (
-                floor(self.pos[0] / 80),
-                floor(self.pos[1] / 80)
-            ),
-            (
-                floor((self.pos[0] + self.size[0]) / 80),
-                floor((self.pos[1] + self.size[1]) / 80)
-            )
-        ))
-        print(self.tileMap.checkCollision(self.pos, self.size))
-        print((
-            (
-                floor(newX[0] / 80),
-                floor(newY[1] / 80)
-            ),
-            (
-                floor((newX[0] + self.size[0]) / 80),
-                floor((newY[1] + self.size[1]) / 80)
-            )
-        ))
-        print(self.tileMap.checkCollision((newX[0], newY[1]), self.size))
+        while self.tileMap.checkCollision(newX, self.size)\
+        and abs(xv) > 0.01:
+            xv /= 2.0
+            self.xv /= 2.0
+            newX[0] -= xv
+
+        if abs(xv) <= 0.01:
+            self.xv = 0.0
+            newX[0] = self.pos[0]
 
         self.pos = (newX[0], newY[1])
         return
