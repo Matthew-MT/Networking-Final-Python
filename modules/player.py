@@ -1,4 +1,5 @@
 from cmath import sqrt
+from math import floor
 from time import time
 from random import randint
 from modules.networking import networking
@@ -16,7 +17,9 @@ class Player:
     lastTime: int = time()
     score: int = 0
     cooldown: int = 200
-    remCool: int = 0
+    remCool: float = 0.0
+    reCool: int = 10000
+    remReCool: float = 0.0
 
     xv: float = 0.0
     yv: float = 0.0
@@ -89,20 +92,25 @@ class Player:
                 })
         return players
 
-    def gameTick(self, curTime, up, left, right, click, target, scrW, scrH):
+    def gameTick(self, curTime, up, left, right, click, target, respawnQueued, scrW, scrH):
+        scalar = curTime - self.lastTime
+        self.lastTime = curTime
         self.network.playerdata(self)
-        self.updateVelAndAcc(curTime, up, left, right)
-        self.updateBullets(curTime)
+        self.updateVelAndAcc(scalar, up, left, right)
+        self.updateBullets(scalar)
         if self.remCool <= 0 and click:
             self.shoot((target[0] - (scrW / 2.0), target[1] - (scrH / 2.0)))
             self.remCool = self.cooldown
         elif self.remCool > 0:
-            self.remCool = self.remCool - (curTime - self.lastTime) * 1000
-        self.lastTime = curTime
+            self.remCool -= (scalar * 1000)
+        if self.remReCool <= 0 and respawnQueued:
+            self.respawn()
+            self.remReCool = self.reCool
+        elif self.remReCool > 0:
+            self.remReCool -= (scalar * 1000)
         return
 
-    def updateVelAndAcc(self, nextTime, up, left, right):
-        scalar = nextTime - self.lastTime
+    def updateVelAndAcc(self, scalar, up, left, right):
         mv = self.mv
         ma = self.ma
         tv = self.tv
@@ -167,24 +175,51 @@ class Player:
         newY = [self.pos[0], self.pos[1] + yv]
         
         while self.tileMap.checkCollision(newX, self.size)\
-        and abs(xv) > 0.001:
-            xv = xv / 2.0
-            self.xv = self.xv / 2.0
-            newX[0] = newX[0] - xv
+        and abs(xv) > 0.01:
+            xv /= 2.0
+            self.xv /= 2.0
+            newX[0] -= xv
 
-        if abs(xv) <= 0.001:
+        if abs(xv) <= 0.01:
             self.xv = 0.0
             newX[0] = self.pos[0]
+            newY[0] = newX[0]
 
         while self.tileMap.checkCollision(newY, self.size)\
-        and abs(yv) > 0.001:
-            yv = yv / 2.0
-            self.yv = self.yv / 2.0
-            newY[1] = newY[1] - yv
+        and abs(yv) > 0.01:
+            yv /= 2.0
+            self.yv /= 2.0
+            newY[1] -= yv
 
-        if abs(yv) <= 0.001:
+        if abs(yv) <= 0.01:
             self.yv = 0.0
             newY[1] = self.pos[1]
+
+        print("Positions:")
+        print(self.pos)
+        print((newX[0], newY[1]))
+        print((
+            (
+                floor(self.pos[0] / 80),
+                floor(self.pos[1] / 80)
+            ),
+            (
+                floor((self.pos[0] + self.size[0]) / 80),
+                floor((self.pos[1] + self.size[1]) / 80)
+            )
+        ))
+        print(self.tileMap.checkCollision(self.pos, self.size))
+        print((
+            (
+                floor(newX[0] / 80),
+                floor(newY[1] / 80)
+            ),
+            (
+                floor((newX[0] + self.size[0]) / 80),
+                floor((newY[1] + self.size[1]) / 80)
+            )
+        ))
+        print(self.tileMap.checkCollision((newX[0], newY[1]), self.size))
 
         self.pos = (newX[0], newY[1])
         return
@@ -200,8 +235,7 @@ class Player:
         })
         return
     
-    def updateBullets(self, nextTime):
-        scalar = nextTime - self.lastTime
+    def updateBullets(self, scalar):
         r: float = (self.size[0] * self.size[0]) + (self.size[1] * self.size[1])
         sx, sy = self.size
         ox = sx / 2.0

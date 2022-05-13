@@ -18,13 +18,6 @@ class TileMap:
         pass
     
     def checkCollision(self, pos: tuple, size: tuple) -> bool:
-        #offset = (
-        #    pos[0] % self.tileSize,
-        #    pos[1] % self.tileSize,
-        #    (pos[0] + size[0]) % self.tileSize,
-        #    (pos[1] + size[1]) % self.tileSize
-        #)
-
         tileIdx = (
             (
                 floor(pos[0] / self.tileSize),
