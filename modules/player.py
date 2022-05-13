@@ -38,11 +38,29 @@ class Player:
 
     def getView(self, scrW, scrH):
         center = (
-            self.pos[0] + (self.size[0] / 2),
-            self.pos[1] + (self.size[1] / 2)
+            self.pos[0] + (self.size[0] / 2.0),
+            self.pos[1] + (self.size[1] / 2.0)
         )
-        origin = (center[0] - (scrW / 2), center[1] - (scrH / 2))
+        origin = (center[0] - (scrW / 2.0), center[1] - (scrH / 2.0))
         return (origin[0], origin[1], origin[0] + scrW, origin[1] + scrH)
+    
+    def getDrawnBullets(self, scrW, scrH):
+        center = (
+            self.pos[0] + (self.size[0] / 2.0),
+            self.pos[1] + (self.size[1] / 2.0)
+        )
+        origin = (center[0] - (scrW / 2.0), center[1] - (scrH / 2.0))
+        alter = (origin[0] + scrW, origin[1] + scrH)
+        bullets: list = []
+        for bullet in self.bullets:
+            if origin[0] < bullet[0] and bullet[0] < alter[0]\
+            and origin[1] < bullet[1] and bullet[1] < alter[1]:
+                bullets.append((bullet[0] - origin[0], bullet[1] - origin[1]))
+        for bullet in self.otherBullets:
+            if origin[0] < bullet[0] and bullet[0] < alter[0]\
+            and origin[1] < bullet[1] and bullet[1] < alter[1]:
+                bullets.append((bullet[0] - origin[0], bullet[1] - origin[1]))
+        return bullets
 
     def gameTick(self, curTime, up, left, right, click, target):
         self.network.playerdata(self)
@@ -197,6 +215,8 @@ class Player:
             
             if collided:
                 toDel.append(i)
+            else:
+                self.bullets[i] = (bx + vx, by + vy)
         
         if len(toDel) > 0:
             c = 0
