@@ -103,6 +103,7 @@ class networking:
       elif mode == constants.PLAYERDISCONNECTED:
         pid = struct.unpack('>B', result[0][0].fileobj.recv(1))[0]
         playerclass.otherPlayers.pop(pid)
+        playerclass.respawn()
 
   def sendkillsignal(self, playerid):
     self.sockettcp.send(struct.pack(">B", playerid))
