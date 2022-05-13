@@ -52,7 +52,8 @@ class Player:
         origin = (center[0] - (scrW / 2.0), center[1] - (scrH / 2.0))
         alter = (origin[0] + scrW, origin[1] + scrH)
         bullets: list = []
-        for bullet in self.bullets:
+        for bulletData in self.bullets:
+            bullet = bulletData["pos"]
             if origin[0] < bullet[0] and bullet[0] < alter[0]\
             and origin[1] < bullet[1] and bullet[1] < alter[1]:
                 bullets.append((bullet[0] - origin[0], bullet[1] - origin[1]))
@@ -164,7 +165,8 @@ class Player:
     def shoot(self, target):
         if len(self.bullets) >= 256:
             return
-        normVect = (target / sqrt((target[0] * target[0]) + (target[1] + target[1]))) * 4096
+        norm = sqrt((target[0] * target[0]) + (target[1] + target[1]))
+        normVect = ((target[0] / norm) * 4096, (target[1] / norm) * 4096)
         self.bullets.append({
             "pos": self.pos,
             "vel": normVect
