@@ -191,8 +191,8 @@ class Player:
     def shoot(self, target):
         if len(self.bullets) >= 256:
             return
-        norm = sqrt((target[0] * target[0]) + (target[1] + target[1])).real
-        normVect = ((target[0] / norm) * 256, (target[1] / norm) * 256)
+        norm = sqrt((target[0] * target[0]) + (target[1] * target[1])).real
+        normVect = ((target[0] / norm) * 1024, (target[1] / norm) * 1024)
         self.bullets.append({
             "pos": (self.pos[0] + (self.size[0] / 2.0), self.pos[1] + (self.size[1] / 2.0)),
             "vel": normVect
@@ -225,13 +225,14 @@ class Player:
                 ay = py + sy
                 dist = ((cx - bx) * (cx - bx)) + ((cy - by) * (cy - by))
                 if dist <= traveled + r:
-                    if vx == 0 or vy == 0:
+                    if (-0.1 <= vx and vx <= 0.1) or (-0.1 <= vy and vy <= 0.1):
                         if abs(bx - cx) <= ox and abs(by - cy) < oy:
                             self.network.sendkillsignal(id)
                             self.score += 1
                             collided = True
                     else:
-                        x = ((((vy * bx) / vx) + ((vx * cx) / vy) - by) - cy) / ((vy / vx) + (vx / vy))
+                        x = (((((vy * bx) / vx) + ((vx * cx) / vy)) - by) + cy)\
+                            / ((vy / vx) + (vx / vy))
                         y = ((vy / vx) * (x - bx)) + by
 
                         if px <= x and x <= ax\
@@ -255,8 +256,10 @@ class Player:
                 if c < len(toDel):
                     if i < toDel[c]:
                         newBullets.append(self.bullets[i])
-                    elif i == toDel[c]:
+                    elif i >= toDel[c]:
                         c += 1
+                else:
+                    newBullets.append(self.bullets[i])
             self.bullets = newBullets
 
         return

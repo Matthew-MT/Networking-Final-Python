@@ -91,7 +91,7 @@ class server:
             try:
               data = readyconnection.fileobj.recv(1)
               if data:
-                self.sendkill(struct.unpack('>B', data))
+                self.sendkill(struct.unpack('>B', data)[0])
               else:
                 raise ConnectionResetError
             except ConnectionResetError:
@@ -136,6 +136,7 @@ class server:
           for pair in self.names.items():
             connection.fileobj.send(struct.pack('>BB', constants.NAMEUPDATE, \
                 pair[0]) + pair[1])
+  
   def sendkill(self, pid):
     for connection in self.connections.get_map().values():
       if connection.data[1] == pid:
