@@ -82,7 +82,6 @@ class networking:
         playerclass.otherPlayers[pid] = dict(name = constants.BERGEN, \
             position = (float(position[0]), float(position[1])), \
             score = score)
-      playerclass.otherPlayers['score'] = 
       bullets = [(0, 0)] * numbullets
       for j in range(numbullets):
         position = struct.unpack_from('>hh', playerdata, offset)
