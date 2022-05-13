@@ -158,11 +158,17 @@ def draw():
     global view
     global background
 
+    #print("Drawing screen")
+
+    #print("Getting view")
     nextView = player.getView(CANVASWIDTH, CANVASHEIGHT)
+    #print("Getting bullets")
     bullets = player.getDrawnBullets(CANVASWIDTH, CANVASHEIGHT)
+    #print("Getting players")
     players = player.getDrawnOtherPlayers(CANVASWIDTH, CANVASHEIGHT)
     r = 4
 
+    #print("Drawing map")
     if abs(nextView[0] - view[0]) > 0.2\
     or abs(nextView[1] - view[1]) > 0.2:
         canvas.delete("tiles")
@@ -182,9 +188,11 @@ def draw():
     
     canvas.delete("redraw")
 
+    #print("Drawing bullets")
     for bullet in bullets:
         canvas.create_oval(bullet[0] - r, bullet[1] - r, bullet[0] + r, bullet[1] + r, fill="black", tags="redraw")
 
+    #print("Drawing players")
     canvas.create_text(
         CANVASWIDTH >> 1,
         (CANVASHEIGHT >> 1) - player.size[1],
@@ -193,6 +201,7 @@ def draw():
         tags="redraw"
     )
     
+    #print("Loop?")
     for otherPlayer in players:
         calcedPos = (
             otherPlayer["pos"][0],
@@ -208,11 +217,12 @@ def draw():
             fill="black",
             tags="redraw"
         )
+        #print("Getting data")
         playerName = otherPlayer["name"]
         playerScore = otherPlayer["score"]
         canvas.create_text(
-            calcedPos[0] + (player.size[0] / 2.0),
-            calcedPos[1] - (player.size[1] / 2.0),
+            calcedPos[0] + (player.size[0] >> 1),
+            calcedPos[1] - (player.size[1] >> 1),
             text=f"{playerName}\n{playerScore}",
             justify=CENTER,
             tags="redraw"
