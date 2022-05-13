@@ -42,11 +42,13 @@ right: bool = False
 click: bool = False
 clickQueued: bool = False
 clickCoords: tuple = (0, 0)
+respawnQueued: bool = False
 
 def keyPress(event):
     global up
     global left
     global right
+    global respawnQueued
     keyName = event.keysym
     if keyName == "Up" or keyName == "w" or keyName == "W":
         up = True
@@ -54,6 +56,8 @@ def keyPress(event):
         left = True
     elif keyName == "Right" or keyName == "d" or keyName == "D":
         right = True
+    elif keyName == "r":
+        respawnQueued = True
     return
 
 def keyRelease(event):
@@ -196,7 +200,7 @@ def draw():
     canvas.create_text(
         CANVASWIDTH >> 1,
         (CANVASHEIGHT >> 1) - player.size[1],
-        text=f"{player.name}\n{player.score}",
+        text=f"\n{player.score}",
         justify=CENTER,
         tags="redraw"
     )
@@ -239,9 +243,11 @@ def update():
     global click
     global clickQueued
     global clickCoords
+    global respawnQueued
 
-    player.gameTick(time(), up, left, right, click or clickQueued, clickCoords, CANVASWIDTH, CANVASHEIGHT)
+    player.gameTick(time(), up, left, right, click or clickQueued, clickCoords, respawnQueued, CANVASWIDTH, CANVASHEIGHT)
     clickQueued = False
+    respawnQueued = False
     draw()
     canvas.after(20, update)
     return

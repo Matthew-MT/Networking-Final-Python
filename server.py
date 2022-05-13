@@ -28,7 +28,7 @@ class server:
         [False, False, False, False, False, False, False, False, False, False, False, False],
         [False, True , True , True , False, False, False, False, False, False, False, False]
       ]
-    )
+    ).transpose()
     """
     self.gamemap = numpy.array(
       [
