@@ -114,13 +114,17 @@ class Player:
         mv = self.mv
         ma = self.ma
         tv = self.tv
-        jv = tv / 1.84
+        jv = tv / 1.72
         fa = ma * scalar
 
         if left and not right:
             self.xa = -ma
+            if self.xv > 0 and self.checkIfGround()[0]:
+                self.xv = self.xv / 2.0
         elif right and not left:
             self.xa = ma
+            if self.xv < 0 and self.checkIfGround()[0]:
+                self.xv = self.xv / 2.0
         else:
             self.xa = 0.0
             if self.xv > fa:

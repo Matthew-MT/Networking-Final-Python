@@ -5,7 +5,6 @@ import socket
 import struct
 import selectors
 import random
-import sys
 
 from modules import constants
 
@@ -17,18 +16,38 @@ class server:
   def __init__(self):
     self.gamemap = numpy.array(
       [
-        [False, True , False, False, True , True , False, True , False, False, False, False],
-        [False, False, True , False, False, False, False, True , False, False, True , True ],
-        [False, False, False, False, False, False, False, False, False, False, False, False],
-        [False, False, False, False, False, False, False, False, False, False, False, False],
-        [False, False, False, False, False, False, False, False, False, False, False, False],
-        [False, False, False, False, False, False, False, False, False, False, False, False],
-        [False, False, False, False, False, False, False, False, False, False, False, False],
-        [False, False, False, False, False, False, False, False, False, False, False, False],
-        [False, False, False, False, False, False, False, False, False, False, False, False],
-        [False, False, False, True , False, False, False, False, False, False, False, False],
-        [False, False, False, False, False, False, False, False, False, False, False, False],
-        [False, True , True , True , False, False, False, False, False, False, False, False]
+        [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, True , False, False, False, True , False, False, False, False, False, True , True , True , True , True , False, True , False, False, False, False, False, False, False, False, False, False, True , True , False],
+        [True , False, False, False, True , False, False, False, True , False, False, False, True , False, False, False, True , False, True , False, True , True , True , False, True , True , True , False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, True , False, False, True , False, True , False, True , False, True , False, False, False, False, False, False, False, False, False, False, False, False, False],
+        [True , True , True , True , True , True , True , True , False, False, True , False, True , False, True , False, True , False, True , False, False, False, False, False, False, False, False, False, False, False, True , True ],
+        [False, False, False, False, False, False, False, False, True , False, False, True , True , False, True , True , True , False, True , False, True , True , False, False, False, True , True , False, False, False, False, False],
+        [False, True , False, True , True , True , False, True , False, True , False, False, True , False, False, False, False, False, True , False, True , True , False, False, False, True , True , False, False, False, False, False],
+        [False, True , False, False, False, False, False, True , False, True , True , False, False, True , True , True , True , True , False, False, False, False, False, True , False, False, False, False, False, True , True , False],
+        [False, True , False, False, False, False, False, True , False, False, False, False, False, False, False, False, False, False, False, True , False, False, False, True , False, False, False, True , False, False, False, False],
+        [False, False, True , False, False, False, True , False, False, False, True , True , True , True , False, False, True , True , False, False, True , False, False, False, False, False, True , False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, True , False, False, False, False, False, False, False, True , False, False, True , True , True , True , True , False, False, False, False, True , True ],
+        [False, False, False, False, False, False, False, False, False, False, True , False, False, False, False, False, False, False, False, True , False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, True , False, False, False, True , True , False, False, False, True , False, False, True , True , False, False, False, True , True , False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True , True , False, True , False, True , True , False, False, False],
+        [False, False, False, True , True , True , False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True , False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, True , False, True , True , False, False, True , True , False, True , False, False, False, False, False, False, False, False, False, False, False, True ],
+        [False, True , False, False, False, False, False, True , False, False, True , False, False, False, False, False, False, False, False, True , False, False, False, True , True , True , True , True , False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, True , False, False, False, False, False, False, False, False, True , False, False, True , False, False, False, False, False, True , False, False, False],
+        [True , False, False, False, False, False, False, False, True , False, False, True , True , True , False, False, True , True , True , True , False, True , False, False, False, False, False, False, False, True , False, False],
+        [False, True , True , True , True , True , True , False, False, True , False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, False, False, False, False, False, False, False, False, False, True , False, True , True , False, False, True , False, False, False, True , False, False, False, True , False, True , False, False, True , True , False],
+        [False, True , True , True , True , True , True , True , True , False, True , False, False, False, True , False, True , False, False, True , False, True , False, True , False, True , False, True , False, True , False, False],
+        [False, False, False, False, False, False, True , False, False, False, True , False, True , True , False, False, True , False, False, True , False, True , False, True , False, True , False, True , False, True , True , False],
+        [True , False, True , True , True , False, True , False, True , True , True , False, False, False, True , False, True , False, False, True , False, True , False, True , False, True , False, True , False, True , False, False],
+        [False, False, True , False, False, False, True , False, False, False, False, False, True , True , False, False, True , True , False, True , False, True , False, True , False, True , False, True , False, True , True , False],
+        [False, True , False, False, True , True , True , True , True , False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False],
+        [False, True , False, True , False, False, False, True , False, False, False, False, False, False, False, False, False, False, False, True , False, False, True , False, False, True , True , False, True , False, True , False],
+        [False, True , False, False, False, True , False, True , False, False, False, False, False, False, False, False, False, False, True , False, True , False, True , False, False, True , False, False, True , False, True , False],
+        [False, True , True , True , True , True , False, True , False, False, False, False, False, False, False, False, False, False, True , False, True , False, True , False, False, True , True , False, False, True , False, False],
+        [False, True , False, False, False, False, False, True , False, False, False, False, False, False, False, False, False, False, True , False, True , False, True , False, False, True , False, False, True , False, True , False],
+        [False, True , True , True , True , True , True , True , False, True , False, False, False, False, False, False, True , False, True , False, True , False, True , True , False, True , True , False, True , False, True , False],
+        [False, True , False, False, False, False, False, False, False, True , True , False, False, False, False, True , True , False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
       ]
     ).transpose()
     """
